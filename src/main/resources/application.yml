@@ -12,3 +12,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL55Dialect
+
+loizenai:
+  app:
+    jwtSecret: jwtLoizenai.comSecretKey
+    jwtExpiration: 86400

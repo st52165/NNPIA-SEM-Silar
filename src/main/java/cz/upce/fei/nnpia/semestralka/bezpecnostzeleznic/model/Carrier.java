@@ -1,23 +1,32 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
+@Entity
+@Table(name = "carriers")
+@NoArgsConstructor
 public class Carrier {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 100, unique = true)
     private String name;
 
-    public Carrier() {
-    }
+    @OneToMany(mappedBy = "carrier", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<User> users = new ArrayList<>();
+
 
     public Carrier(String name) {
         this();

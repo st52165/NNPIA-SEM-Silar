@@ -1,26 +1,62 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
+import java.util.*;
 
 @Getter
 @Setter
+@Entity
+@NoArgsConstructor
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+                "username"
+        }),
+        @UniqueConstraint(columnNames = {
+                "email"
+        })
+})
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstname;
-    private String lastname;
-    private String username;
-    private String email;
-    private String password;
-    private Set<Role> roles = new HashSet<>();
-    private Carrier carrier;
 
-    public User() {
-    }
+    @Column(nullable = false)
+    @Size(min = 3, max = 50)
+    private String firstname;
+
+    @Column(nullable = false)
+    @Size(min = 3, max = 50)
+    private String lastname;
+
+    @Column(nullable = false, unique = true)
+    @Size(min = 5, max = 50)
+    private String username;
+
+    @Column(nullable = false, unique = true)
+    @Size(max = 50)
+    @Email
+    private String email;
+
+    @Column(nullable = false)
+    @Size(min = 8, max = 100)
+    @JsonIgnore
+    private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Carrier carrier;
 
     public User(String firstname, String lastname, String username, String email, String password, Set<Role> roles) {
         this.firstname = firstname;

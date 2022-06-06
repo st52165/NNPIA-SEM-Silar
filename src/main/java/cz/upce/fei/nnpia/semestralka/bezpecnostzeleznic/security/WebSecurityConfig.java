@@ -76,7 +76,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/static/**",
             "/images/**",
             "/manifest.json",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/error",
+
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/**",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui/",
+            "/swagger-ui"
     };
 
     @Bean
