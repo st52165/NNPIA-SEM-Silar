@@ -1,0 +1,35 @@
+version: '3.2'
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Prague"
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - db-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      TZ: "Europe/Prague"
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    networks:
+      - db-network
+
+networks:
+  db-network:
+
+volumes:
+  db_data:
