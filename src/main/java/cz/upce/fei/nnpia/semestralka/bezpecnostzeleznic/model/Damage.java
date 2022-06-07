@@ -24,7 +24,6 @@ public class Damage {
     private int price;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
     private Incident incident;
 
 }

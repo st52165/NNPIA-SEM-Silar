@@ -2,6 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model;
 
 import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
 import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vividsolutions.jts.geom.Geometry;
@@ -46,7 +47,7 @@ public class Incident {
     private boolean isFireIncident;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Wagon wagon;
 
     @ManyToOne
@@ -55,6 +56,7 @@ public class Incident {
     @ManyToOne
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "incident", cascade = CascadeType.REMOVE)
     private List<Damage> damages;
 }

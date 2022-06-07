@@ -23,9 +23,14 @@ public class Carrier {
     @Column(nullable = false, length = 100, unique = true)
     private String name;
 
+
     @OneToMany(mappedBy = "carrier", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<User> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "carrier", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private List<Wagon> wagons = new ArrayList<>();
 
 
     public Carrier(String name) {

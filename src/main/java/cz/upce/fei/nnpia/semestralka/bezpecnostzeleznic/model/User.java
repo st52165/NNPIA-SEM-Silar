@@ -48,6 +48,7 @@ public class User {
     @JsonIgnore
     private String password;
 
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -56,6 +57,10 @@ public class User {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Carrier carrier;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private Set<Incident> incidents;
 
     public User(String firstname, String lastname, String username, String email, String password, Set<Role> roles) {
         this.firstname = firstname;
