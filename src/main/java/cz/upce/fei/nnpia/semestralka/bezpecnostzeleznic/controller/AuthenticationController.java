@@ -5,7 +5,6 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.request.SignUpFo
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.CurrentUser;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
-import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

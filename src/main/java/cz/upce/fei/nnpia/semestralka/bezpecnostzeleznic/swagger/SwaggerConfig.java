@@ -1,6 +1,5 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.swagger;
 
-import io.swagger.annotations.ApiParam;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.annotations.ApiIgnore;
