@@ -5,11 +5,13 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.request.SignUpFo
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.CurrentUser;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -29,7 +31,8 @@ public class AuthenticationController {
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<?> registerUser(@CurrentUser final UserPrinciple currentUser, @Valid @RequestBody final SignUpForm signUpRequest) {
+    public ResponseEntity<?> registerUser(@ApiIgnore @CurrentUser final UserPrinciple currentUser,
+                                          @Valid @RequestBody final SignUpForm signUpRequest) {
         return authService.registerUser(currentUser, signUpRequest);
     }
 }

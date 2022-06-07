@@ -1,7 +1,9 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.swagger;
 
+import io.swagger.annotations.ApiParam;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.annotations.ApiIgnore;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
@@ -22,7 +24,8 @@ public class SwaggerConfig {
                 .select()
                 .paths(PathSelectors.any()).build().apiInfo(apiInfo())
                 .securitySchemes(securitySchemes())
-                .securityContexts(List.of(securityContext()));
+                .securityContexts(List.of(securityContext()))
+                .ignoredParameterTypes(ApiIgnore.class);
     }
 
     private ApiInfo apiInfo() {
