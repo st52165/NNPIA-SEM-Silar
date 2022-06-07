@@ -1,6 +1,7 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.controller;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,9 +19,10 @@ public class HelloWorldController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ADMIN_SZ')")
     @GetMapping({"/users"})
     public String user() {
-        return "Hello user '" + authenticationService.getLoggedUser().getUsername() + "'!";
+        return "Hello user '" + authenticationService.getLoggedUser().getFirstname() + "'!";
     }
 
 

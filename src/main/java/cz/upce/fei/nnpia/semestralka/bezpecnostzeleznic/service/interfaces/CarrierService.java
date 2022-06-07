@@ -22,5 +22,4 @@ public interface CarrierService {
     Carrier update(Long id, CarrierDto carrierRequest) throws HttpRequestMethodNotSupportedException;
 
     Carrier delete(Long carrierID) throws HttpRequestMethodNotSupportedException;
-
 }

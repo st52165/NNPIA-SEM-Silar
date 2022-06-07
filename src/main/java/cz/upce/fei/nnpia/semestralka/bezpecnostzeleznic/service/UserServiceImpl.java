@@ -1,7 +1,5 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.RoleDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Role;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.RoleRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.UserRepository;
@@ -45,10 +43,4 @@ public class UserServiceImpl implements UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow();
     }
-
-
-    public Role createRoleFromRoleDto(RoleDto roleDto) {
-        return roleRepository.findByName(roleDto.getRoleName()).get();
-    }
-
 }
