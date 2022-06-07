@@ -3,10 +3,10 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.*;
 
 @Getter
@@ -27,24 +27,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50) default 'NULL'")
     @Size(min = 3, max = 50)
     private String firstname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(50) default 'NULL'")
     @Size(min = 3, max = 50)
     private String lastname;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "varchar(50) default 'NULL'")
     @Size(min = 5, max = 50)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "varchar(50) default 'NULL'")
     @Size(max = 50)
     @Email
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(100) default 'NULL'")
     @Size(min = 8, max = 100)
     @JsonIgnore
     private String password;

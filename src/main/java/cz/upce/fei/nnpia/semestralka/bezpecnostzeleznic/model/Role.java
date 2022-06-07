@@ -21,5 +21,4 @@ public class Role {
     @NaturalId
     @Column(length = 60, unique = true)
     private RoleName name;
-
 }
