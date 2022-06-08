@@ -1,5 +1,6 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.swagger;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.CurrentUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.annotations.ApiIgnore;
@@ -24,7 +25,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any()).build().apiInfo(apiInfo())
                 .securitySchemes(securitySchemes())
                 .securityContexts(List.of(securityContext()))
-                .ignoredParameterTypes(ApiIgnore.class);
+                .ignoredParameterTypes(ApiIgnore.class, CurrentUser.class);
     }
 
     private ApiInfo apiInfo() {
