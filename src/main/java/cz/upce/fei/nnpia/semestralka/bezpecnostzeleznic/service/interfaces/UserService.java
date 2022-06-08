@@ -40,5 +40,5 @@ public interface UserService {
 
     ResponseEntity<?> addRole(String username, RoleDto roleRequest);
 
-    ResponseEntity<?> updateUserRole(String username, RoleDto roleRequest);
+    ResponseEntity<?> updateUserRole(final UserPrinciple currentUser, String username, RoleDto roleRequest);
 }

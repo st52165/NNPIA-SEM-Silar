@@ -231,16 +231,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<?> updateUserRole(String username, RoleDto roleRequest) {
+    public ResponseEntity<?> updateUserRole(final UserPrinciple currentUser, String username, RoleDto roleRequest) {
         Optional<Role> foundRole = roleRepository.findByName(roleRequest.getRoleName());
         if (foundRole.isPresent()) {
-            User user = userRepository.findByUsername(username).orElseThrow();
-            Set<Role> roles = user.getRoles();
-            roles.remove(roles.iterator().next());
-            roles.add(foundRole.get());
-            user.setRoles(roles);
-            userRepository.save(user);
-            return ResponseEntity.ok("Uživateli byla aktualizována role.");
+            User loggedUser = userRepository.findByUsername(currentUser.getUsername()).orElseThrow();
+            User updatingUser = userRepository.findByUsername(username).orElseThrow();
+
+            boolean isAdminSZ = loggedUser.getRoles().contains(roleRepository.findByName(RoleName.ROLE_ADMIN_SZ).orElseThrow());
+            if (isAdminSZ || !roleRequest.getRoleName().equals(RoleName.ROLE_ADMIN_SZ)) {
+                Set<Role> roles = updatingUser.getRoles();
+                if ((long) roles.size() == 1) {
+                    roles.clear();
+                }
+                if (roles.contains(foundRole.get())) {
+                    roles.remove(foundRole.get());
+                } else {
+                    roles.add(foundRole.get());
+                }
+                updatingUser.setRoles(roles);
+
+                userRepository.save(updatingUser);
+                return ResponseEntity.ok("Uživateli byla aktualizována role.");
+            }
+            return ResponseEntity.badRequest().body("Nepodařilo se aktualizovat roli. Uživatel nemá dostatečná oprávnění!");
         }
         return ResponseEntity.badRequest().body("Nepodařilo se aktualizovat roli. Role nebyla nalezena!");
     }

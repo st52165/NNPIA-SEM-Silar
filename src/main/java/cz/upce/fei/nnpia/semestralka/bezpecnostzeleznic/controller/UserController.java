@@ -117,8 +117,9 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
     @PutMapping(path = "/role/{username}")
-    public ResponseEntity<?> updateUserRole(@PathVariable("username") final String username, @Validated @RequestBody final RoleDto roleDto) {
-        return userService.updateUserRole(username, roleDto);
+    public ResponseEntity<?> updateUserRole(@CurrentUser final UserPrinciple currentUser, @PathVariable("username") final String username,
+                                            @Validated @RequestBody final RoleDto roleDto) {
+        return userService.updateUserRole(currentUser, username, roleDto);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ')")
