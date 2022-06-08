@@ -22,29 +22,37 @@ import java.util.*;
 })
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
+    public static final int minNameLength = 3;
+    public static final int maxNameLength = 50;
+    public static final int minPasswordLength = 6;
+    public static final int maxPasswordLength = 100;
+    public static final int minUsernameLength = 5;
+    public static final int maxUsernameLength = 50;
+    public static final int maxEmailLength = 50;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(min = 3, max = 50)
+    @Size(min = minNameLength, max = maxNameLength)
     private String firstname;
 
     @Column(nullable = false, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(min = 3, max = 50)
+    @Size(min = minNameLength, max = maxNameLength)
     private String lastname;
 
     @Column(nullable = false, unique = true, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(min = 5, max = 50)
+    @Size(min = minUsernameLength, max = maxUsernameLength)
     private String username;
 
     @Column(nullable = false, unique = true, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(max = 50)
+    @Size(max = maxEmailLength)
     @Email
     private String email;
 
     @Column(nullable = false, columnDefinition = "varchar(100) default 'NULL'")
-    @Size(min = 8, max = 100)
+    @Size(min = minPasswordLength, max = maxPasswordLength)
     @JsonIgnore
     private String password;
 

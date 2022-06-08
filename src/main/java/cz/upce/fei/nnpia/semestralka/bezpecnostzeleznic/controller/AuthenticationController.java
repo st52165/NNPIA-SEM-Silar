@@ -30,7 +30,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<?> registerUser(@ApiIgnore @CurrentUser final UserPrinciple currentUser,
+    public ResponseEntity<?> registerUser(@CurrentUser final UserPrinciple currentUser,
                                           @Valid @RequestBody final SignUpForm signUpRequest) {
         return authService.registerUser(currentUser, signUpRequest);
     }
