@@ -33,7 +33,11 @@ public class ConversionService {
         return modelMapper.map(carrier, CarrierDto.class);
     }
 
-    public static Carrier toCarrier(CarrierDto carrierDto, Carrier carrier) {
+    public CarrierInfoDto toCarrierInfoDto(Carrier carrier) {
+        return modelMapper.map(carrier, CarrierInfoDto.class);
+    }
+
+    public Carrier toCarrier(CarrierDto carrierDto, Carrier carrier) {
         if (!isNullOrEmpty(carrierDto.getName())) {
             carrier = carrier == null ? new Carrier() : carrier;
             carrier.setName(carrierDto.getName());

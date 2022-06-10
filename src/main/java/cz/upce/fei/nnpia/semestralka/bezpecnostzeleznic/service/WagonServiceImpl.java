@@ -29,15 +29,13 @@ public class WagonServiceImpl implements WagonService {
     private final AuthenticationService authenticationService;
     private final WagonRepository wagonRepository;
     private final IncidentRepository incidentRepository;
-    private final IncidentService incidentService;
     private final CarrierRepository carrierRepository;
 
     public WagonServiceImpl(AuthenticationService authenticationService, WagonRepository wagonRepository,
-                            IncidentRepository incidentRepository, IncidentService incidentService, CarrierRepository carrierRepository) {
+                            IncidentRepository incidentRepository, CarrierRepository carrierRepository) {
         this.authenticationService = authenticationService;
         this.wagonRepository = wagonRepository;
         this.incidentRepository = incidentRepository;
-        this.incidentService = incidentService;
         this.carrierRepository = carrierRepository;
     }
 

@@ -24,14 +24,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
     private final ConversionService conversionService;
 
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder, ConversionService conversionService) {
+                           ConversionService conversionService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
         this.conversionService = conversionService;
     }
 
@@ -108,10 +106,5 @@ public class UserServiceImpl implements UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsernameIgnoreCase(username).orElseThrow(()
                 -> new NotFoundException(String.format(USER_BY_USERNAME_NOT_FOUND, username)));
-    }
-
-
-    private Role createRoleFromRoleDto(RoleDto roleDto) {
-        return roleRepository.findByName(roleDto.getRoleName()).orElseThrow();
     }
 }

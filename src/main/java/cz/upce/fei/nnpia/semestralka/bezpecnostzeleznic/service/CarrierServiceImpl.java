@@ -1,5 +1,6 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.CarrierInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.CarrierDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
@@ -9,9 +10,13 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.Carri
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CarrierServiceImpl implements CarrierService {
+
+    public static final String CARRIER_ID_NOT_FOUND = "Železniční dopravce s id: '%d' nebyl nalezen.";
+    public static final String CARRIER_NAME_NOT_FOUND = "Železniční dopravce s názvem '%s' nebyl nalezen!";
 
     private final CarrierRepository carrierRepository;
     private final ConversionService conversionService;
@@ -22,20 +27,22 @@ public class CarrierServiceImpl implements CarrierService {
     }
 
     @Override
-    public List<Carrier> getCarriersList() {
-        return carrierRepository.findAll();
+    public List<CarrierInfoDto> getCarriersList() {
+        return carrierRepository.findAll().stream()
+                .map(conversionService::toCarrierInfoDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Carrier getCarrierFromID(Long carrierID) {
-        return carrierRepository.findById(carrierID).orElseThrow(()
-                -> new NotFoundException("Železniční dopravce s id: '" + carrierID + "' nebyl nalezen."));
+    public CarrierInfoDto getCarrierFromID(Long carrierID) {
+        return conversionService.toCarrierInfoDto(carrierRepository.findById(carrierID).orElseThrow(()
+                -> new NotFoundException(String.format(CARRIER_ID_NOT_FOUND, carrierID))));
     }
 
     @Override
-    public Carrier getCarrierByName(String name) {
-        return carrierRepository.findByName(name).orElseThrow(()
-                -> new NotFoundException("Společnost s názvem '" + name + "' nebyla nalezena!"));
+    public CarrierInfoDto getCarrierByName(String name) {
+        return conversionService.toCarrierInfoDto(carrierRepository.findByName(name).orElseThrow(()
+                -> new NotFoundException(String.format(CARRIER_NAME_NOT_FOUND, name))));
     }
 
     @Override
@@ -44,24 +51,24 @@ public class CarrierServiceImpl implements CarrierService {
     }
 
     @Override
-    public Carrier insert(CarrierDto carrierRequest) {
-        return updateCarrierEntity(carrierRequest, null);
+    public CarrierInfoDto insert(CarrierDto carrierRequest) {
+        return conversionService.toCarrierInfoDto(carrierRepository
+                .save(conversionService.toCarrier(carrierRequest, null)));
     }
 
     @Override
-    public Carrier update(Long id, CarrierDto carrierRequest) {
-        Carrier requestCarrier = getCarrierFromID(id);
-        return updateCarrierEntity(carrierRequest, requestCarrier);
+    public CarrierInfoDto update(Long carrierID, CarrierDto carrierRequest) {
+        Carrier requestCarrier = carrierRepository.findById(carrierID).orElseThrow(()
+                -> new NotFoundException(String.format(CARRIER_ID_NOT_FOUND, carrierID)));
+
+        return conversionService.toCarrierInfoDto(carrierRepository
+                .save(conversionService.toCarrier(carrierRequest, requestCarrier)));
     }
 
     @Override
-    public Carrier delete(Long carrierID) {
-        Carrier requestCarrier = getCarrierFromID(carrierID);
-        carrierRepository.delete(requestCarrier);
+    public CarrierInfoDto delete(Long carrierID) {
+        CarrierInfoDto requestCarrier = getCarrierFromID(carrierID);
+        carrierRepository.deleteById(carrierID);
         return requestCarrier;
-    }
-
-    private Carrier updateCarrierEntity(CarrierDto carrierRequest, Carrier updatingEntity) {
-        return carrierRepository.save(conversionService.toCarrier(carrierRequest, updatingEntity));
     }
 }

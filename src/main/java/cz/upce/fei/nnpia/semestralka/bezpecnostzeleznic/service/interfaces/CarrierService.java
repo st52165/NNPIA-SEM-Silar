@@ -1,23 +1,23 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.CarrierDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Carrier;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.CarrierInfoDto;
 
 import java.util.List;
 
 public interface CarrierService {
 
-    List<Carrier> getCarriersList();
+    List<CarrierInfoDto> getCarriersList();
 
-    Carrier getCarrierFromID(Long carrierID);
+    CarrierInfoDto getCarrierFromID(Long carrierID);
 
-    Carrier getCarrierByName(String name);
+    CarrierInfoDto getCarrierByName(String name);
 
     boolean existsByCarrierID(Long carrierID);
 
-    Carrier insert(CarrierDto carrierRequest);
+    CarrierInfoDto insert(CarrierDto carrierRequest);
 
-    Carrier update(Long id, CarrierDto carrierRequest);
+    CarrierInfoDto update(Long id, CarrierDto carrierRequest);
 
-    Carrier delete(Long carrierID);
+    CarrierInfoDto delete(Long carrierID);
 }
