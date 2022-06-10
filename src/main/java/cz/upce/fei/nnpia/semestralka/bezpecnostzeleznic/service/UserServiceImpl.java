@@ -1,13 +1,11 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Carrier;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.UserRepository;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionService;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.UserService;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +18,15 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     public static final String USER_BY_ID_NOT_FOUND = "Uživatel s id: %d nebyl nalezen!";
     public static final String USER_BY_USERNAME_NOT_FOUND = "Uživatel s uživatelským jménem '%s' nebyl nalezen!";
-    private static final String USERNAME_NOT_LOAD_MESSAGE = "Nepodařilo se načíst uživatele!";
 
     private final UserRepository userRepository;
     private final ConversionService conversionService;
+    private final AuthenticationService authenticationService;
 
-    public UserServiceImpl(UserRepository userRepository, ConversionService conversionService) {
+    public UserServiceImpl(UserRepository userRepository, ConversionService conversionService, AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.conversionService = conversionService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -41,13 +40,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void insertUser(User user) {
-        userRepository.save(user);
-    }
-
-    @Override
-    public UserInfoDto getUserResponseByUsername(String username) {
-        return conversionService.toUserInfoDto(getUserByUsername(username));
+    public UserInfoDto getUserByUsername(String username) {
+        return conversionService.toUserInfoDto(userRepository.findByUsernameIgnoreCase(username).orElseThrow(()
+                -> new NotFoundException(String.format(USER_BY_USERNAME_NOT_FOUND, username))));
     }
 
     @Override
@@ -62,46 +57,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUserList(UserPrinciple currentUser) {
+    public List<UserInfoDto> getUserList() {
         Collection<User> users;
-        User user = userRepository.findByUsername(currentUser.getUsername()).orElseThrow(()
-                -> new NotFoundException(USERNAME_NOT_LOAD_MESSAGE));
+        User loggedUser = authenticationService.getLoggedUser();
 
-        if (Objects.isNull(user.getCarrier())) {
+        if (Objects.isNull(loggedUser.getCarrier())) {
             users = userRepository.findAll();
         } else {
-            users = user.getCarrier().getUsers();
+            users = loggedUser.getCarrier().getUsers();
         }
 
-        return users.stream().map(conversionService::toUserDto).collect(Collectors.toList());
+        return users.stream().map(conversionService::toUserInfoDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<UserDto> getUserListWithSameCarrier(String username) {
-
-        User loggedUser = userRepository.findByUsername(username).orElseThrow(()
-                -> new NotFoundException(USERNAME_NOT_LOAD_MESSAGE));
-
-        Carrier carrier = loggedUser.getCarrier();
-
-        List<User> users = userRepository.findAll();
-
-        return users.stream().filter(user -> user.getCarrier() != null && user.getCarrier().equals(carrier))
-                .map(conversionService::toUserDto)
-                .collect(Collectors.toList());
+    public List<UserInfoDto> getUserListWithSameCarrier() {
+        return userRepository.findAllByCarrier(authenticationService.getLoggedUser().getCarrier())
+                .stream().map(conversionService::toUserInfoDto).collect(Collectors.toList());
     }
 
     @Override
-    public UserDto deleteUser(Long id) {
+    public UserInfoDto deleteUser(Long id) {
         User deletingUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(USER_BY_ID_NOT_FOUND, id)));
         userRepository.deleteById(id);
-        return conversionService.toUserDto(deletingUser);
-    }
-
-    @Override
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsernameIgnoreCase(username).orElseThrow(()
-                -> new NotFoundException(String.format(USER_BY_USERNAME_NOT_FOUND, username)));
+        return conversionService.toUserInfoDto(deletingUser);
     }
 }

@@ -10,11 +10,11 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Role;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.RoleName;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.CarrierRepository;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.UserRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.jwt.JwtProvider;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.RoleService;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Objects;
 
 import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.CarrierServiceImpl.CARRIER_NAME_NOT_FOUND;
+import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.UserServiceImpl.USER_BY_USERNAME_NOT_FOUND;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -35,18 +36,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder encoder;
     private final JwtProvider jwtProvider;
-    private final UserService userService;
     private final RoleService roleService;
     private final CarrierRepository carrierRepository;
+    private final UserRepository userRepository;
 
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager, PasswordEncoder encoder,
-                                     JwtProvider jwtProvider, UserService userService, RoleService roleService, CarrierRepository carrierRepository) {
+                                     JwtProvider jwtProvider, RoleService roleService,
+                                     CarrierRepository carrierRepository, UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.encoder = encoder;
         this.jwtProvider = jwtProvider;
-        this.userService = userService;
         this.roleService = roleService;
         this.carrierRepository = carrierRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -66,12 +68,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public ResponseMessage registerUser(UserPrinciple currentUser, SignUpForm signUpRequest) {
 
-        if (userService.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Fail -> Username '%s' již je použit!",
                     signUpRequest.getUsername()));
         }
 
-        if (userService.existsByEmail(signUpRequest.getEmail())) {
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Fail -> Email '%s' již je použit!",
                     signUpRequest.getEmail()));
         }
@@ -87,23 +89,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             carrier = carrierRepository.findByName(signUpRequest.getCarrier()).orElseThrow(()
                     -> new NotFoundException(String.format(CARRIER_NAME_NOT_FOUND, signUpRequest.getCarrier())));
         } else if (roleName == RoleName.ROLE_ADMIN_DS || roleName == RoleName.ROLE_USER_DS) {
-            carrier = userService.getUserByUsername(currentUser.getUsername()).getCarrier();
+            carrier = getUserByUserName(currentUser.getUsername()).getCarrier();
         }
 
         User user = new User(signUpRequest.getFirstname(), signUpRequest.getLastname(),
                 signUpRequest.getUsername(), signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()), role, carrier);
 
-        userService.insertUser(user);
+        userRepository.save(user);
 
         return new ResponseMessage("Účet " + signUpRequest.getUsername() + " byl úspěšně vytvořen!");
     }
 
     @Override
     public User getLoggedUser() {
-        var principles = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrinciple principles = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return userService.getUserByUsername(principles.getUsername());
+        return getUserByUserName(principles.getUsername());
     }
 
+    private User getUserByUserName(String userName) {
+        return userRepository.findByUsernameIgnoreCase(userName).orElseThrow(()
+                -> new NotFoundException(String.format(USER_BY_USERNAME_NOT_FOUND, userName)));
+    }
 }

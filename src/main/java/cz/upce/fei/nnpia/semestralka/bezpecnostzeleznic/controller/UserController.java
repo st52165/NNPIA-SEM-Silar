@@ -22,19 +22,19 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS', 'USER_DS')")
     @GetMapping(path = "")
     public UserInfoDto getUser(@CurrentUser final UserPrinciple currentUser) {
-        return userService.getUserResponseByUsername(currentUser.getUsername());
+        return userService.getUserByUsername(currentUser.getUsername());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
     @GetMapping(path = "/{username}")
     public UserInfoDto getUserByUsername(@PathVariable("username") final String username) {
-        return userService.getUserResponseByUsername(username);
+        return userService.getUserByUsername(username);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS', 'USER_DS')")
     @GetMapping(path = "/carrier")
-    public List<UserDto> getUserListWithSameCarrier(@CurrentUser final UserPrinciple currentUser) {
-        return userService.getUserListWithSameCarrier(currentUser.getUsername());
+    public List<UserInfoDto> getUserListWithSameCarrier() {
+        return userService.getUserListWithSameCarrier();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
@@ -51,19 +51,19 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
     @GetMapping(path = "/list")
-    public List<UserDto> getUserList(@CurrentUser final UserPrinciple currentUser) {
-        return userService.getUserList(currentUser);
+    public List<UserInfoDto> getUserList() {
+        return userService.getUserList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
     @DeleteMapping(path = "")
-    public UserDto deleteUser(@CurrentUser final UserPrinciple currentUser) {
+    public UserInfoDto deleteUser(@CurrentUser final UserPrinciple currentUser) {
         return userService.deleteUser(currentUser.getId());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
     @DeleteMapping(path = "/{id}")
-    public UserDto deleteUserById(@PathVariable("id") final Long id) {
+    public UserInfoDto deleteUserById(@PathVariable("id") final Long id) {
         return userService.deleteUser(id);
     }
 }
