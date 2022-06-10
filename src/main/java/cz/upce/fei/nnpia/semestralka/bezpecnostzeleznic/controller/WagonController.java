@@ -33,9 +33,9 @@ public class WagonController {
     }
 
     @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
-    @GetMapping(path = "/carrier")
-    public List<WagonInfoDto> getWagonsByCarrier() {
-        return wagonService.getWagonsByCarrierId();
+    @GetMapping(path = "/carrier/{name}")
+    public List<WagonInfoDto> getWagonsByCarrier(@PathVariable("name") final String carrierName) {
+        return wagonService.getWagonsByCarrierName(carrierName);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_DS', 'ADMIN_SZ')")

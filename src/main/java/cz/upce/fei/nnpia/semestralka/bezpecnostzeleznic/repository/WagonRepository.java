@@ -7,13 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface WagonRepository extends JpaRepository<Wagon, Long> {
 
     List<Wagon> findAllByWagonType(WagonType wagonType);
 
-    List<Wagon> findAllByCarrier(Carrier carrier);
+    List<Wagon> findAllByCarrier_Name(String carrierName);
 
-    List<Wagon> findAllByCarrier_Id(Long carrierId);
+    Optional<Wagon> findByIdAndCarrier(Long wagonId, Carrier carrier);
 }

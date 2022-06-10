@@ -39,14 +39,15 @@ public class Incident {
 
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private IncidentType incidentType;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Wagon wagon;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Region region;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private User user;
 
     @JsonIgnore

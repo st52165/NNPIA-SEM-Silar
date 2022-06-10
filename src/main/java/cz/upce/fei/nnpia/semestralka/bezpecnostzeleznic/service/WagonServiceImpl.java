@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class WagonServiceImpl implements WagonService {
     public static final String WAGON_ID_NOT_FOUND = "Železniční vagon s id: '%d' nebyl nalezen.";
+    public static final String WAGON_PERMISSION = "Je možné, že nemáte oprávnění spravovat tento vagon.";
 
     private final AuthenticationService authenticationService;
     private final WagonRepository wagonRepository;
@@ -66,10 +67,9 @@ public class WagonServiceImpl implements WagonService {
 
     @Override
     public WagonInfoDto update(Long id, WagonDto wagonRequest) {
-        Wagon updatingWagon = wagonRepository.findById(id).orElseThrow(()
-                -> new NotFoundException(String.format(WAGON_ID_NOT_FOUND, id)));
-
-        updatingWagon.setCarrier(authenticationService.getLoggedUser().getCarrier());
+        Wagon updatingWagon = wagonRepository.findByIdAndCarrier(id,
+                authenticationService.getLoggedUser().getCarrier()).orElseThrow(()
+                -> new NotFoundException(String.format(WAGON_ID_NOT_FOUND + " " + WAGON_PERMISSION, id)));
 
         return conversionService.toWagonInfoDto(wagonRepository
                 .save(conversionService.toWagon(wagonRequest, updatingWagon)));
@@ -77,9 +77,12 @@ public class WagonServiceImpl implements WagonService {
 
     @Override
     public WagonInfoDto delete(Long wagonID) {
-        WagonInfoDto deleting = getWagonFromID(wagonID);
-        wagonRepository.deleteById(wagonID);
-        return deleting;
+        Wagon deletingWagon = wagonRepository.findByIdAndCarrier(wagonID,
+                authenticationService.getLoggedUser().getCarrier()).orElseThrow(()
+                -> new NotFoundException(String.format(WAGON_ID_NOT_FOUND + " " + WAGON_PERMISSION, wagonID)));
+
+        wagonRepository.delete(deletingWagon);
+        return conversionService.toWagonInfoDto(deletingWagon);
     }
 
     @Override
@@ -95,8 +98,8 @@ public class WagonServiceImpl implements WagonService {
     }
 
     @Override
-    public List<WagonInfoDto> getWagonsByCarrierId() {
-        return wagonRepository.findAllByCarrier(authenticationService.getLoggedUser().getCarrier()).stream()
+    public List<WagonInfoDto> getWagonsByCarrierName(String carrierName) {
+        return wagonRepository.findAllByCarrier_Name(carrierName).stream()
                 .map(conversionService::toWagonInfoDto).collect(Collectors.toList());
     }
 

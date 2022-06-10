@@ -18,16 +18,17 @@ public class Wagon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private int length;
 
-    @Column
+    @Column(nullable = false)
     private int weight;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private WagonType wagonType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Carrier carrier;
 
     @OneToMany(mappedBy = "wagon", cascade = CascadeType.REMOVE)

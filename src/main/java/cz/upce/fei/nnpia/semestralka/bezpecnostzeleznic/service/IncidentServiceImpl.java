@@ -25,6 +25,8 @@ public class IncidentServiceImpl implements IncidentService {
 
     public static final String INCIDENT_ID_NOT_FOUND = "Incident s id: %d nebyl nalezen.";
 
+    public static final String INCIDENT_PERMISSION = "Je možné, že nemáte oprávnění spravovat tento incident.";
+
     private final IncidentRepository incidentRepository;
     private final UserRepository userRepository;
     private final ConversionService conversionService;
@@ -53,30 +55,35 @@ public class IncidentServiceImpl implements IncidentService {
 
     @Override
     public IncidentInfoDto getIncidentFromID(Long incidentID) throws HttpServerErrorException {
-        return conversionService.toIncidentInfoDto(incidentRepository.findById(incidentID).orElseThrow(() -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND, incidentID))));
+        return conversionService.toIncidentInfoDto(incidentRepository.findById(incidentID).orElseThrow(()
+                -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND, incidentID))));
     }
 
     @Override
     public IncidentInfoDto add(IncidentDto incidentDto) {
-        Incident newIncident = new Incident();
-        newIncident.setUser(authenticationService.getLoggedUser());
-
-        return conversionService.toIncidentInfoDto(incidentRepository.save(conversionService.toIncident(incidentDto, newIncident)));
+        return conversionService.toIncidentInfoDto(incidentRepository
+                .save(conversionService.toIncident(incidentDto, null)));
     }
 
     @Override
     public IncidentInfoDto edit(IncidentDto incidentDto, Long id) {
-        Incident updatingIncident = incidentRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND, id)));
+        Incident updatingIncident = incidentRepository.findByIdAndUser_Carrier(id,
+                authenticationService.getLoggedUser().getCarrier()).orElseThrow(()
+                -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND + " " + INCIDENT_PERMISSION, id)));
 
         updatingIncident.setUser(authenticationService.getLoggedUser());
 
-        return conversionService.toIncidentInfoDto(incidentRepository.save(conversionService.toIncident(incidentDto, updatingIncident)));
+        return conversionService.toIncidentInfoDto(incidentRepository
+                .save(conversionService.toIncident(incidentDto, updatingIncident)));
     }
 
     @Override
     public IncidentInfoDto delete(Long id) {
-        IncidentInfoDto deleting = getIncidentFromID(id);
-        incidentRepository.deleteById(id);
-        return deleting;
+        Incident deletingIncident = incidentRepository.findByIdAndUser_Carrier(id,
+                authenticationService.getLoggedUser().getCarrier()).orElseThrow(()
+                -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND + " " + INCIDENT_PERMISSION, id)));
+
+        incidentRepository.delete(deletingIncident);
+        return conversionService.toIncidentInfoDto(deletingIncident);
     }
 }

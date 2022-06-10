@@ -57,9 +57,9 @@ public class User {
     private String password;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Role role;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Carrier carrier;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)

@@ -21,6 +21,7 @@ public class Role {
 
     @Enumerated(EnumType.STRING)
     @NaturalId
+    @Column(nullable = false)
     private RoleName name;
 
     @JsonIgnore
