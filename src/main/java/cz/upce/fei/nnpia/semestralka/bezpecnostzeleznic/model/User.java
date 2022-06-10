@@ -22,47 +22,43 @@ import java.util.*;
 })
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
-    public static final int minNameLength = 3;
-    public static final int maxNameLength = 50;
-    public static final int minPasswordLength = 6;
-    public static final int maxPasswordLength = 100;
-    public static final int minUsernameLength = 5;
-    public static final int maxUsernameLength = 50;
-    public static final int maxEmailLength = 50;
+    public static final int MIN_NAME_LENGTH = 3;
+    public static final int MAX_NAME_LENGTH = 50;
+    public static final int MIN_PASSWORD_LENGTH = 6;
+    public static final int MAX_PASSWORD_LENGTH = 100;
+    public static final int MIN_USERNAME_LENGTH = 5;
+    public static final int MAX_USERNAME_LENGTH = 50;
+    public static final int MAX_EMAIL_LENGTH = 50;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(min = minNameLength, max = maxNameLength)
+    @Size(min = MIN_NAME_LENGTH, max = MAX_NAME_LENGTH)
     private String firstname;
 
     @Column(nullable = false, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(min = minNameLength, max = maxNameLength)
+    @Size(min = MIN_NAME_LENGTH, max = MAX_NAME_LENGTH)
     private String lastname;
 
     @Column(nullable = false, unique = true, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(min = minUsernameLength, max = maxUsernameLength)
+    @Size(min = MIN_USERNAME_LENGTH, max = MAX_USERNAME_LENGTH)
     private String username;
 
     @Column(nullable = false, unique = true, columnDefinition = "varchar(50) default 'NULL'")
-    @Size(max = maxEmailLength)
+    @Size(max = MAX_EMAIL_LENGTH)
     @Email
     private String email;
 
     @Column(nullable = false, columnDefinition = "varchar(100) default 'NULL'")
-    @Size(min = minPasswordLength, max = maxPasswordLength)
+    @Size(min = MIN_PASSWORD_LENGTH, max = MAX_PASSWORD_LENGTH)
     @JsonIgnore
     private String password;
 
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Role role;
     @ManyToOne(fetch = FetchType.EAGER)
     private Carrier carrier;
 
@@ -70,23 +66,23 @@ public class User {
     @JsonIgnore
     private Set<Incident> incidents;
 
-    public User(String firstname, String lastname, String username, String email, String password, Set<Role> roles) {
+    public User(String firstname, String lastname, String username, String email, String password, Role role) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles = roles;
+        this.role = role;
         this.carrier = null;
     }
 
-    public User(String firstname, String lastname, String username, String email, String password, Set<Role> roles, Carrier carrier) {
+    public User(String firstname, String lastname, String username, String email, String password, Role role, Carrier carrier) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles = roles;
+        this.role = role;
         this.carrier = carrier;
     }
 }

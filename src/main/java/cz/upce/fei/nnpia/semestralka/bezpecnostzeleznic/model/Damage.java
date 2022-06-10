@@ -1,6 +1,5 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;

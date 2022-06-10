@@ -20,10 +20,7 @@ public class Region {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @ManyToOne
-    private State state;
-
     @OneToMany(mappedBy = "region", cascade = CascadeType.REMOVE)
     @JsonIgnore
-    private Set<District> districts;
+    private Set<Incident> incidents;
 }

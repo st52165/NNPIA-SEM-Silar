@@ -2,15 +2,15 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.controller;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.request.LoginForm;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.request.SignUpForm;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.response.JwtResponse;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.response.ResponseMessage;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.CurrentUser;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -25,13 +25,13 @@ public class AuthenticationController {
     }
 
     @PostMapping(path = "/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody final LoginForm loginRequest) {
+    public JwtResponse authenticateUser(@Valid @RequestBody final LoginForm loginRequest) {
         return authService.authenticateUser(loginRequest);
     }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<?> registerUser(@CurrentUser final UserPrinciple currentUser,
-                                          @Valid @RequestBody final SignUpForm signUpRequest) {
+    public ResponseMessage registerUser(@CurrentUser final UserPrinciple currentUser,
+                                        @Valid @RequestBody final SignUpForm signUpRequest) {
         return authService.registerUser(currentUser, signUpRequest);
     }
 }

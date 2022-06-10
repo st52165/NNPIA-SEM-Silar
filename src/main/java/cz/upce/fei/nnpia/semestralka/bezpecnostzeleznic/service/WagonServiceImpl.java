@@ -1,14 +1,11 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Incident;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.RoleName;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Wagon;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.WagonType;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.*;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.CarrierRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.IncidentRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.WagonRepository;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.WagonTypeRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.IncidentService;
@@ -23,22 +20,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.IncidentServiceImpl.INCIDENT_ID_NOT_FOUND;
+
 @Service
 @Transactional
 public class WagonServiceImpl implements WagonService {
 
     private final AuthenticationService authenticationService;
     private final WagonRepository wagonRepository;
-    private final WagonTypeRepository wagonTypeRepository;
     private final IncidentRepository incidentRepository;
     private final IncidentService incidentService;
     private final CarrierRepository carrierRepository;
 
-    public WagonServiceImpl(AuthenticationService authenticationService, WagonRepository wagonRepository, WagonTypeRepository wagonTypeRepository,
+    public WagonServiceImpl(AuthenticationService authenticationService, WagonRepository wagonRepository,
                             IncidentRepository incidentRepository, IncidentService incidentService, CarrierRepository carrierRepository) {
         this.authenticationService = authenticationService;
         this.wagonRepository = wagonRepository;
-        this.wagonTypeRepository = wagonTypeRepository;
         this.incidentRepository = incidentRepository;
         this.incidentService = incidentService;
         this.carrierRepository = carrierRepository;
@@ -50,8 +47,8 @@ public class WagonServiceImpl implements WagonService {
     }
 
     @Override
-    public List<Wagon> getWagonsListByWagonTypeID(Long wagonTypeID) {
-        return getWagonsListResponseEntity(wagonRepository.findAllByWagonType_Id(wagonTypeID));
+    public List<Wagon> getWagonsListByWagonType(WagonType wagonType) {
+        return getWagonsListResponseEntity(wagonRepository.findAllByWagonType(wagonType));
     }
 
     @Override
@@ -121,9 +118,6 @@ public class WagonServiceImpl implements WagonService {
 
     @Override
     public List<Wagon> getWagonsByCarrierId() {
-        if (authenticationService.getLoggedUser().getRoles().stream().anyMatch(it -> it.getName() == RoleName.ROLE_ADMIN_SZ)) {
-            return wagonRepository.findAll();
-        }
         return wagonRepository.findAllByCarrier(authenticationService.getLoggedUser().getCarrier());
     }
 
@@ -143,7 +137,8 @@ public class WagonServiceImpl implements WagonService {
             throws HttpServerErrorException {
         try {
             Wagon updatingWagon = getWagonFromID(wagonID);
-            Incident updatingIncident = incidentService.getIncidentFromID(incidentId);
+            Incident updatingIncident = incidentRepository.findById(incidentId).orElseThrow(()
+                    -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND, incidentId)));
 
             if (addingIncident) {
                 updatingIncident.setWagon(updatingWagon);
@@ -162,10 +157,8 @@ public class WagonServiceImpl implements WagonService {
     private Wagon updateWagonEntity(Wagon updatingEntity, WagonDto wagonRequest)
             throws HttpServerErrorException {
         try {
-            if (isNotNullOrEmpty(wagonRequest.getWagonTypeID())) {
-                updatingEntity.setWagonType(getWagonTypeFromID(wagonRequest.getWagonTypeID()));
-            } else if (wagonRequest.getWagonTypeName() != null && !StringUtils.containsWhitespace(wagonRequest.getWagonTypeName())) {
-                updatingEntity.setWagonType(getWagonTypeFromID(wagonRequest.getWagonTypeID()));
+            if (wagonRequest.getWagonType() != null) {
+                updatingEntity.setWagonType(wagonRequest.getWagonType());
             }
             if (isNotNullOrEmpty(wagonRequest.getLength())) {
                 updatingEntity.setLength(wagonRequest.getLength());
@@ -184,15 +177,6 @@ public class WagonServiceImpl implements WagonService {
         } catch (Exception e) {
             throw new HttpServerErrorException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-    }
-
-    private WagonType getWagonTypeFromID(Long wagonTypeID) throws HttpServerErrorException {
-        Optional<WagonType> requestWagonType = wagonTypeRepository.findById(wagonTypeID);
-        if (requestWagonType.isEmpty()) {
-            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST,
-                    "Typ vagonu s id: '" + wagonTypeID + "' nebyl nalezen.");
-        }
-        return requestWagonType.get();
     }
 
     private List<Wagon> getWagonsListResponseEntity(List<Wagon> wagons) {

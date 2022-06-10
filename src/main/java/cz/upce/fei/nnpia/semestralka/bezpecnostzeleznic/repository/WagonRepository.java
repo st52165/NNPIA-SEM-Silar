@@ -15,8 +15,5 @@ public interface WagonRepository extends JpaRepository<Wagon, Long> {
 
     List<Wagon> findAllByCarrier(Carrier carrier);
 
-
-    List<Wagon> findAllByWagonType_Id(Long wagonTypeId);
-
     List<Wagon> findAllByCarrier_Id(Long carrierId);
 }

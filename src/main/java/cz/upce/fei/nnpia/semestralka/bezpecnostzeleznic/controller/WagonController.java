@@ -2,6 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.controller;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.response.ResponseMessage;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.WagonType;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.CurrentUser;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.WagonService;
@@ -28,9 +29,9 @@ public class WagonController {
     }
 
     @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
-    @GetMapping(path = "/type/{id}")
-    public ResponseEntity<?> getWagonsByWagonTypeID(@PathVariable("id") final Long wagonTypeID) {
-        return ResponseEntity.ok(wagonService.getWagonsListByWagonTypeID(wagonTypeID));
+    @GetMapping(path = "/type/{name}")
+    public ResponseEntity<?> getWagonsByWagonTypeID(@PathVariable("name") final WagonType wagonTypeName) {
+        return ResponseEntity.ok(wagonService.getWagonsListByWagonType(wagonTypeName));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_DS', 'ADMIN_SZ')")

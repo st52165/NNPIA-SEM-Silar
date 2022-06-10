@@ -1,9 +1,9 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,32 +13,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UserPrinciple implements UserDetails {
 
-	private static final long serialVersionUID = 1L;
-	private Long id;
-    private String username;
+    private static final long serialVersionUID = 1L;
+    private Long id;
+    private final String username;
 
     @JsonIgnore
-    private String password;
+    private final String password;
 
-    private Collection<? extends GrantedAuthority> authorities;
+    private final GrantedAuthority authority;
 
-    public UserPrinciple(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities){
+    public UserPrinciple(Long id, String username, String password, GrantedAuthority authority) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.authorities = authorities;
+        this.authority = authority;
     }
 
     public static UserPrinciple build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
-                new SimpleGrantedAuthority(role.getName().name())
-        ).collect(Collectors.toList());
-
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getName().name());
         return new UserPrinciple(
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                authorities
+                authority
         );
     }
 
@@ -58,6 +55,8 @@ public class UserPrinciple implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(authority);
         return authorities;
     }
 
@@ -85,7 +84,7 @@ public class UserPrinciple implements UserDetails {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        
+
         UserPrinciple user = (UserPrinciple) o;
         return Objects.equals(id, user.id);
     }

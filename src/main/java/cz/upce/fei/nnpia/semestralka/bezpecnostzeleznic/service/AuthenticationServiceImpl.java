@@ -14,9 +14,6 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.Authe
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.CarrierService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.RoleService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.UserService;
-import javassist.NotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,10 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -51,7 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<?> authenticateUser(LoginForm loginRequest) {
+    public JwtResponse authenticateUser(LoginForm loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -61,64 +55,45 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String jwt = jwtProvider.generateJwtToken(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities()));
+        return new JwtResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities());
     }
 
     @Override
-    public ResponseEntity<?> registerUser(UserPrinciple currentUser, SignUpForm signUpRequest) {
+    public ResponseMessage registerUser(UserPrinciple currentUser, SignUpForm signUpRequest) {
 
         if (userService.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity<>(new ResponseMessage("Fail -> Username je již použit!"),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseMessage("Fail -> Username je již použit!");
         }
 
         if (userService.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<>(new ResponseMessage("Fail -> Email je již použit!"),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseMessage("Fail -> Email je již použit!");
         }
 
-        Set<Role> roles = new HashSet<>();
-        if (signUpRequest.getRole() != null) {
-            String role = signUpRequest.getRole();
-
-            switch (role.toUpperCase()) {
-                case "ADMIN_SZ":
-                    Role adminSz = roleService.findByName(RoleName.ROLE_ADMIN_SZ);
-                    roles.add(adminSz);
-                    break;
-                case "ADMIN_DS":
-                    Role adminDs = roleService.findByName(RoleName.ROLE_ADMIN_DS);
-                    roles.add(adminDs);
-                    break;
-                default:
-                    Role userRole = roleService.findByName(RoleName.ROLE_USER_DS);
-                    roles.add(userRole);
-            }
-        } else {
-            Role userRole = roleService.findByName(RoleName.ROLE_USER_DS);
-            roles.add(userRole);
+        Role role;
+        String roleRequest = signUpRequest.getRole() == null ? "" : signUpRequest.getRole().toUpperCase();
+        switch (roleRequest) {
+            case "ADMIN_DS":
+                role = roleService.findByName(RoleName.ROLE_ADMIN_DS);
+                break;
+            default:
+                role = roleService.findByName(RoleName.ROLE_USER_DS);
         }
 
         Carrier carrier = null;
-        RoleName roleName = ((Role) Arrays.stream(roles.toArray()).iterator().next()).getName();
-
+        RoleName roleName = role.getName();
         if (Objects.nonNull(signUpRequest.getCarrier())) {
-            try {
-                carrier = carrierService.getCarrierByName(signUpRequest.getCarrier());
-            } catch (NotFoundException e) {
-                ResponseEntity.badRequest().body(e.getMessage());
-            }
+            carrier = carrierService.getCarrierByName(signUpRequest.getCarrier());
         } else if (roleName == RoleName.ROLE_ADMIN_DS || roleName == RoleName.ROLE_USER_DS) {
             carrier = userService.getUserByUsername(currentUser.getUsername()).getCarrier();
         }
 
         User user = new User(signUpRequest.getFirstname(), signUpRequest.getLastname(),
                 signUpRequest.getUsername(), signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()), roles, carrier);
+                encoder.encode(signUpRequest.getPassword()), role, carrier);
 
         userService.insertUser(user);
 
-        return new ResponseEntity<>(new ResponseMessage("Účet " + signUpRequest.getUsername() + " byl úspěšně vytvořen!"), HttpStatus.OK);
+        return new ResponseMessage("Účet " + signUpRequest.getUsername() + " byl úspěšně vytvořen!");
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "wagons")
+@AllArgsConstructor
 public class Wagon {
 
     @Id
@@ -23,7 +24,7 @@ public class Wagon {
     @Column
     private int weight;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
     private WagonType wagonType;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -34,7 +35,7 @@ public class Wagon {
     private Set<Incident> incidents;
 
     public Wagon() {
-        this.incidents = Collections.EMPTY_SET;
+        this.incidents = Collections.emptySet();
     }
 
     public Wagon(WagonType wagonType) {
@@ -47,15 +48,5 @@ public class Wagon {
         this.length = length;
         this.weight = weight;
         this.wagonType = wagonType;
-    }
-
-    public Wagon(Long id, int length, int weight, WagonType wagonType, Carrier carrier,
-                 Set<Incident> incidents) {
-        this.id = id;
-        this.length = length;
-        this.weight = weight;
-        this.wagonType = wagonType;
-        this.carrier = carrier;
-        this.incidents = incidents;
     }
 }

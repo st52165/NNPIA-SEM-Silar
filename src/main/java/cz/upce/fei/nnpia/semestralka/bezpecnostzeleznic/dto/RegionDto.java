@@ -3,8 +3,9 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto;
 import lombok.Data;
 
 @Data
-public class UserPasswordDto {
+public class RegionDto {
 
-    private String password;
+    private Long id;
 
+    private String name;
 }

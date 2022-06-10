@@ -1,13 +1,11 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.WagonType;
 import lombok.Data;
 
 @Data
 public class WagonDto {
-
-    private Long wagonTypeID;
-
-    private String wagonTypeName;
+    private WagonType wagonType;
 
     private Integer length;
 

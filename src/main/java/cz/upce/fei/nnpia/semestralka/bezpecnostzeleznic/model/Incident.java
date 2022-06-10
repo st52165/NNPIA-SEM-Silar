@@ -1,13 +1,9 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model;
 
-import com.bedatadriven.jackson.datatype.jts.serialization.GeometryDeserializer;
-import com.bedatadriven.jackson.datatype.jts.serialization.GeometrySerializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.vividsolutions.jts.geom.Geometry;
 import lombok.Getter;
 import lombok.Setter;
+import org.geolatte.geom.Geometry;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -24,8 +20,6 @@ public class Incident {
     private Long id;
 
     @Column(nullable = false, columnDefinition = "Geometry")
-    @JsonSerialize(using = GeometrySerializer.class)
-    @JsonDeserialize(using = GeometryDeserializer.class)
     private Geometry position;
 
     @Column(nullable = false)
@@ -43,15 +37,14 @@ public class Incident {
     @Column(nullable = false)
     private boolean isSolvedByPolice;
 
-    @Column(nullable = false)
-    private boolean isFireIncident;
 
-
+    @Enumerated(EnumType.STRING)
+    private IncidentType incidentType;
     @ManyToOne(fetch = FetchType.LAZY)
     private Wagon wagon;
 
     @ManyToOne
-    private District district;
+    private Region region;
 
     @ManyToOne
     private User user;

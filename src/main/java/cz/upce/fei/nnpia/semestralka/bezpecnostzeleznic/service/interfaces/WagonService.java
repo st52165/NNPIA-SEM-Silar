@@ -2,6 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Wagon;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.WagonType;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -11,7 +12,7 @@ public interface WagonService {
 
     List<Wagon> getWagonsList();
 
-    List<Wagon> getWagonsListByWagonTypeID(Long wagonTypeID);
+    List<Wagon> getWagonsListByWagonType(WagonType wagonType);
 
     Wagon getWagonFromID(Long wagonID) throws HttpServerErrorException;
 

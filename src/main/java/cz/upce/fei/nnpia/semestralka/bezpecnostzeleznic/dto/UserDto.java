@@ -2,8 +2,6 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class UserDto {
 
@@ -19,7 +17,7 @@ public class UserDto {
 
     private String password;
 
-    private List<String> roles;
+    private String role;
 
     private String carrier;
 

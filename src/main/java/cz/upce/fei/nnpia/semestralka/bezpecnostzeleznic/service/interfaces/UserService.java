@@ -1,12 +1,8 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces;
 
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.RoleDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserEditDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserPasswordDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserUsernameDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.*;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -20,25 +16,15 @@ public interface UserService {
 
     void insertUser(User user);
 
-    ResponseEntity<?> getUserResponseByUsername(String username);
+    UserInfoDto getUserResponseByUsername(String username);
 
-    ResponseEntity<List<String>> getUsers();
+    List<String> getUsers();
 
-    ResponseEntity<?> isUsernameExist(String username);
+    boolean isUsernameExist(String username);
 
-    ResponseEntity<?> getUserList(UserPrinciple currentUser);
+    List<UserDto> getUserList(UserPrinciple currentUser);
 
-    ResponseEntity<?> getUserListWithSameCarrier(String username);
+    List<UserDto> getUserListWithSameCarrier(String username);
 
-    ResponseEntity<?> updatePassword(String username, UserPasswordDto passwordRequest);
-
-    ResponseEntity<?> updateUsername(String username, UserUsernameDto nameRequest);
-
-    ResponseEntity<?> updateOther(String username, UserEditDto userRequest);
-
-    ResponseEntity<?> deleteUser(Long id);
-
-    ResponseEntity<?> addRole(String username, RoleDto roleRequest);
-
-    ResponseEntity<?> updateUserRole(final UserPrinciple currentUser, String username, RoleDto roleRequest);
+    UserDto deleteUser(Long id);
 }
