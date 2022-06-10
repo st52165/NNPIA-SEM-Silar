@@ -22,7 +22,6 @@ public class Damage {
     @Column(nullable = false)
     private int price;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Incident incident;
-
 }
