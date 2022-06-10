@@ -1,19 +1,19 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionService;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.*;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Carrier;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Role;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.RoleRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.UserRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.UserService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,13 +23,10 @@ public class UserServiceImpl implements UserService {
     private static final String USERNAME_NOT_LOAD_MESSAGE = "Nepodařilo se načíst uživatele!";
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final ConversionService conversionService;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-                           ConversionService conversionService) {
+    public UserServiceImpl(UserRepository userRepository, ConversionService conversionService) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.conversionService = conversionService;
     }
 
