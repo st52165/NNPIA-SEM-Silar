@@ -1,5 +1,6 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.request.LoginForm;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.request.SignUpForm;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.message.response.JwtResponse;
@@ -8,12 +9,13 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Carrier;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Role;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.RoleName;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.CarrierRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.jwt.JwtProvider;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.CarrierService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.RoleService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,8 +23,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Objects;
+
+import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.CarrierServiceImpl.CARRIER_NAME_NOT_FOUND;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -32,16 +37,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtProvider jwtProvider;
     private final UserService userService;
     private final RoleService roleService;
-    private final CarrierService carrierService;
+    private final CarrierRepository carrierRepository;
 
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager, PasswordEncoder encoder,
-                                     JwtProvider jwtProvider, UserService userService, RoleService roleService, CarrierService carrierService) {
+                                     JwtProvider jwtProvider, UserService userService, RoleService roleService, CarrierRepository carrierRepository) {
         this.authenticationManager = authenticationManager;
         this.encoder = encoder;
         this.jwtProvider = jwtProvider;
         this.userService = userService;
         this.roleService = roleService;
-        this.carrierService = carrierService;
+        this.carrierRepository = carrierRepository;
     }
 
     @Override
@@ -62,27 +67,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ResponseMessage registerUser(UserPrinciple currentUser, SignUpForm signUpRequest) {
 
         if (userService.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseMessage("Fail -> Username je již použit!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Fail -> Username '%s' již je použit!",
+                    signUpRequest.getUsername()));
         }
 
         if (userService.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseMessage("Fail -> Email je již použit!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Fail -> Email '%s' již je použit!",
+                    signUpRequest.getEmail()));
         }
 
         Role role;
         String roleRequest = signUpRequest.getRole() == null ? "" : signUpRequest.getRole().toUpperCase();
-        switch (roleRequest) {
-            case "ADMIN_DS":
-                role = roleService.findByName(RoleName.ROLE_ADMIN_DS);
-                break;
-            default:
-                role = roleService.findByName(RoleName.ROLE_USER_DS);
-        }
+        role = roleService.findByName("ADMIN_DS".equals(roleRequest) ?
+                RoleName.ROLE_ADMIN_DS : RoleName.ROLE_USER_DS);
 
         Carrier carrier = null;
         RoleName roleName = role.getName();
         if (Objects.nonNull(signUpRequest.getCarrier())) {
-            carrier = carrierService.getCarrierByName(signUpRequest.getCarrier());
+            carrier = carrierRepository.findByName(signUpRequest.getCarrier()).orElseThrow(()
+                    -> new NotFoundException(String.format(CARRIER_NAME_NOT_FOUND, signUpRequest.getCarrier())));
         } else if (roleName == RoleName.ROLE_ADMIN_DS || roleName == RoleName.ROLE_USER_DS) {
             carrier = userService.getUserByUsername(currentUser.getUsername()).getCarrier();
         }

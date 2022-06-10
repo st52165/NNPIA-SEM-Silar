@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class UserPrinciple implements UserDetails {
 
     private static final long serialVersionUID = 1L;
-    private Long id;
+    private final Long id;
     private final String username;
 
     @JsonIgnore
