@@ -61,7 +61,7 @@ public class ConversionService {
     public IncidentInfoDto toIncidentInfoDto(Incident incident) {
         IncidentInfoDto incidentDto = modelMapper.map(incident, IncidentInfoDto.class);
         incidentDto.setPosition(incident.getPosition().getPositionN(0));
-        incidentDto.setWagonDto(toWagonDto(incident.getWagon()));
+        incidentDto.setWagonDto(toWagonInfoDto(incident.getWagon()));
         incidentDto.setUserInfoDto(toUserInfoDto(incident.getUser()));
         incidentDto.setRegionDto(toRegionDto(incident.getRegion()));
         return incidentDto;
@@ -108,11 +108,31 @@ public class ConversionService {
         return incident;
     }
 
-    public WagonDto toWagonDto(Wagon wagon) {
-        WagonDto wagonDto = modelMapper.map(wagon, WagonDto.class);
-        wagonDto.setCarrierID(wagon.getCarrier().getId());
-        wagonDto.setCarrierName(wagon.getCarrier().getName());
+    public WagonInfoDto toWagonInfoDto(Wagon wagon) {
+        WagonInfoDto wagonDto = modelMapper.map(wagon, WagonInfoDto.class);
+        wagonDto.setCarrierDto(toCarrierInfoDto(wagon.getCarrier()));
         return wagonDto;
+    }
+
+    public Wagon toWagon(WagonDto wagonDto, Wagon wagon) {
+        wagon = wagon == null ? new Wagon() : wagon;
+        if (wagonDto.getWagonType() != null) {
+            wagon.setWagonType(wagonDto.getWagonType());
+        }
+        if (!isNullOrEmpty(wagonDto.getLength())) {
+            wagon.setLength(wagonDto.getLength());
+        }
+        if (!isNullOrEmpty(wagonDto.getWeight())) {
+            wagon.setWeight(wagonDto.getWeight());
+        }
+//        if (!isNullOrEmpty(wagonDto.getCarrierID())) {
+//            wagon.setCarrier(carrierRepository.findById(wagonDto.getCarrierID()).orElseThrow(()
+//                    -> new NotFoundException(String.format(CARRIER_ID_NOT_FOUND, wagonDto.getCarrierID()))));
+//        }
+//        else if (wagonRequest.getCarrierName() != null && !StringUtils.containsWhitespace(wagonRequest.getCarrierName())) {
+//            updatingEntity.setCarrier(carrierRepository.findByName(wagonRequest.getCarrierName()).orElseThrow(()->));
+//        }
+        return wagonRepository.save(wagon);
     }
 
     public RegionDto toRegionDto(Region region) {

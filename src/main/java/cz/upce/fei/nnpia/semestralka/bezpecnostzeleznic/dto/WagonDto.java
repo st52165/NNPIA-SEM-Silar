@@ -10,9 +10,4 @@ public class WagonDto {
     private Integer length;
 
     private Integer weight;
-
-    private Long carrierID;
-
-    private String carrierName;
-
 }

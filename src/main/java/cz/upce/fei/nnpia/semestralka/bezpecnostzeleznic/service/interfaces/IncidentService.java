@@ -4,7 +4,6 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Incident;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.IncidentType;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface IncidentService {
 
     List<Incident> getAll();
 
-    List<IncidentInfoDto> getAllByUser(UserPrinciple user);
+    List<IncidentInfoDto> getAllByUser();
 
     List<IncidentInfoDto> getAllByCarrier(String carrierName);
 
@@ -20,9 +19,9 @@ public interface IncidentService {
 
     IncidentInfoDto getIncidentFromID(Long incidentID);
 
-    IncidentInfoDto add(UserPrinciple user, IncidentDto incidentDto);
+    IncidentInfoDto add(IncidentDto incidentDto);
 
-    IncidentInfoDto edit(UserPrinciple user, IncidentDto incidentDto, Long id);
+    IncidentInfoDto edit(IncidentDto incidentDto, Long id);
 
     IncidentInfoDto delete(Long id);
 }

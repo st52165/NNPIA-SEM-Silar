@@ -14,5 +14,4 @@ public interface AuthenticationService {
     ResponseMessage registerUser(UserPrinciple currentUser, SignUpForm signUpRequest);
 
     User getLoggedUser();
-
 }

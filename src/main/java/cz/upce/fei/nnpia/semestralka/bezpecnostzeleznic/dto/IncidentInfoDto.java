@@ -25,7 +25,7 @@ public class IncidentInfoDto {
 
     private IncidentType incidentType;
 
-    private WagonDto wagonDto;
+    private WagonInfoDto wagonDto;
 
     UserInfoDto userInfoDto;
 

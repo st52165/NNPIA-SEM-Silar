@@ -1,34 +1,30 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Wagon;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.WagonType;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 
 public interface WagonService {
 
-    List<Wagon> getWagonsList();
+    List<WagonInfoDto> getWagonsList();
 
-    List<Wagon> getWagonsListByWagonType(WagonType wagonType);
+    List<WagonInfoDto> getWagonsListByWagonType(WagonType wagonType);
 
-    Wagon getWagonFromID(Long wagonID) throws HttpServerErrorException;
+    WagonInfoDto getWagonFromID(Long wagonID);
 
     boolean existsByWagonID(Long wagonID);
 
-    Wagon insert(WagonDto wagonRequest) throws HttpServerErrorException;
+    WagonInfoDto insert(WagonDto wagonRequest);
 
-    Wagon update(Long id, WagonDto wagonRequest) throws HttpServerErrorException;
+    WagonInfoDto update(Long id, WagonDto wagonRequest);
 
-    Wagon delete(Long wagonID) throws HttpServerErrorException;
+    WagonInfoDto delete(Long wagonID);
 
-    Wagon addIncident(Long wagonID, Long incidentId) throws HttpServerErrorException;
+    WagonInfoDto addIncident(Long wagonID, Long incidentId);
 
-    Wagon deleteIncident(Long wagonID, Long incidentId) throws HttpServerErrorException;
+    WagonInfoDto deleteIncident(Long wagonID, Long incidentId);
 
-    List<Wagon> getWagonsByCarrierId();
-
-    List<Wagon> getAllWagons(UserPrinciple currentUser);
+    List<WagonInfoDto> getWagonsByCarrierId();
 }

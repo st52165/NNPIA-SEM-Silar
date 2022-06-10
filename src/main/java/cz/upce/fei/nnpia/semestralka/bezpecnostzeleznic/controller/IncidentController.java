@@ -3,8 +3,6 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.controller;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.IncidentType;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.CurrentUser;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.security.service.UserPrinciple;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.IncidentService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +20,8 @@ public class IncidentController {
 
     @PreAuthorize("hasAnyRole('ADMIN_DS', 'USER_DS')")
     @GetMapping("/all")
-    public List<IncidentInfoDto> getAll(@CurrentUser final UserPrinciple currentUser) {
-        return incidentService.getAllByUser(currentUser);
+    public List<IncidentInfoDto> getAll() {
+        return incidentService.getAllByUser();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_DS', 'USER_DS')")
@@ -46,17 +44,15 @@ public class IncidentController {
 
     @PreAuthorize("hasRole('ADMIN_DS')")
     @PostMapping
-    public IncidentInfoDto post(@CurrentUser final UserPrinciple currentUser,
-                                @Validated @RequestBody final IncidentDto incidentDto) {
-        return incidentService.add(currentUser, incidentDto);
+    public IncidentInfoDto post(@Validated @RequestBody final IncidentDto incidentDto) {
+        return incidentService.add(incidentDto);
     }
 
     @PreAuthorize("hasRole('ADMIN_DS')")
     @PutMapping("/{id}")
-    public IncidentInfoDto put(@CurrentUser final UserPrinciple currentUser,
-                               @Validated @RequestBody final IncidentDto incidentDto,
+    public IncidentInfoDto put(@Validated @RequestBody final IncidentDto incidentDto,
                                @PathVariable("id") final Long id) {
-        return incidentService.edit(currentUser, incidentDto, id);
+        return incidentService.edit(incidentDto, id);
     }
 
     @PreAuthorize("hasRole('ADMIN_DS')")
