@@ -2,11 +2,12 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentWagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Incident;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.IncidentType;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.IncidentRepository;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.UserRepository;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionAction;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.IncidentService;
@@ -28,7 +29,6 @@ public class IncidentServiceImpl implements IncidentService {
     public static final String INCIDENT_PERMISSION = "Je možné, že nemáte oprávnění spravovat tento incident.";
 
     private final IncidentRepository incidentRepository;
-    private final UserRepository userRepository;
     private final ConversionService conversionService;
 
     private final AuthenticationService authenticationService;
@@ -67,9 +67,7 @@ public class IncidentServiceImpl implements IncidentService {
 
     @Override
     public IncidentInfoDto edit(IncidentDto incidentDto, Long id) {
-        Incident updatingIncident = incidentRepository.findByIdAndUser_Carrier(id,
-                authenticationService.getLoggedUser().getCarrier()).orElseThrow(()
-                -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND + " " + INCIDENT_PERMISSION, id)));
+        Incident updatingIncident = getIncidentFromIDAndLoggedUserCarrier(id);
 
         updatingIncident.setUser(authenticationService.getLoggedUser());
 
@@ -79,11 +77,34 @@ public class IncidentServiceImpl implements IncidentService {
 
     @Override
     public IncidentInfoDto delete(Long id) {
-        Incident deletingIncident = incidentRepository.findByIdAndUser_Carrier(id,
-                authenticationService.getLoggedUser().getCarrier()).orElseThrow(()
-                -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND + " " + INCIDENT_PERMISSION, id)));
+        Incident deletingIncident = getIncidentFromIDAndLoggedUserCarrier(id);
 
         incidentRepository.delete(deletingIncident);
         return conversionService.toIncidentInfoDto(deletingIncident);
+    }
+
+    @Override
+    public IncidentInfoDto addWagon(Long id, IncidentWagonDto incidentWagonDto) {
+        return conversionService.toIncidentInfoDto(incidentRepository.save(conversionService.toIncident(
+                incidentWagonDto, getIncidentFromIDAndLoggedUserCarrier(id), ConversionAction.ADD)));
+    }
+
+    @Override
+    public IncidentInfoDto updateWagon(Long id, IncidentWagonDto incidentWagonDto) {
+        return conversionService.toIncidentInfoDto(incidentRepository.save(conversionService.toIncident(
+                incidentWagonDto, getIncidentFromIDAndLoggedUserCarrier(id), ConversionAction.UPDATE)));
+    }
+
+    @Override
+    public IncidentInfoDto removeWagon(Long id, IncidentWagonDto incidentWagonDto) {
+        return conversionService.toIncidentInfoDto(incidentRepository.save(conversionService.toIncident(
+                incidentWagonDto, getIncidentFromIDAndLoggedUserCarrier(id), ConversionAction.REMOVE)));
+    }
+
+
+    private Incident getIncidentFromIDAndLoggedUserCarrier(Long id) {
+        return incidentRepository.findByIdAndUser_Carrier(id,
+                authenticationService.getLoggedUser().getCarrier()).orElseThrow(()
+                -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND + " " + INCIDENT_PERMISSION, id)));
     }
 }

@@ -2,6 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.controller;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentWagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.IncidentType;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.IncidentService;
 import lombok.AllArgsConstructor;
@@ -59,5 +60,27 @@ public class IncidentController {
     @DeleteMapping("/{id}")
     public IncidentInfoDto delete(@PathVariable("id") final Long id) {
         return incidentService.delete(id);
+    }
+
+
+    @PreAuthorize("hasAnyRole('ADMIN_DS')")
+    @PostMapping(path = "/{id}/addwagon")
+    public IncidentInfoDto addWagon(@PathVariable("id") final Long id,
+                                    @RequestBody final IncidentWagonDto incidentWagonDto) {
+        return incidentService.addWagon(id, incidentWagonDto);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN_DS')")
+    @PutMapping(path = "/{id}/wagon")
+    public IncidentInfoDto updateWagon(@PathVariable("id") final Long id,
+                                       @RequestBody final IncidentWagonDto incidentWagonDto) {
+        return incidentService.updateWagon(id, incidentWagonDto);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN_DS')")
+    @DeleteMapping(path = "/{id}/removewagon")
+    public IncidentInfoDto removeWagon(@PathVariable("id") final Long id,
+                                       @RequestBody final IncidentWagonDto incidentWagonDto) {
+        return incidentService.removeWagon(id, incidentWagonDto);
     }
 }

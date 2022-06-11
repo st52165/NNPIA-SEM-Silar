@@ -5,6 +5,7 @@ import lombok.Data;
 import org.geolatte.geom.Position;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Data
 public class IncidentInfoDto {
@@ -25,7 +26,7 @@ public class IncidentInfoDto {
 
     private IncidentType incidentType;
 
-    private WagonInfoDto wagonDto;
+    private List<WagonInfoDto> wagons;
 
     UserInfoDto userInfoDto;
 

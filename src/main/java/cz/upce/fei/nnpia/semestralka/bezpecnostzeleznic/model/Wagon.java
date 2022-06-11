@@ -31,7 +31,7 @@ public class Wagon {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Carrier carrier;
 
-    @OneToMany(mappedBy = "wagon", cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "wagons")
     @JsonIgnore
     private Set<Incident> incidents;
 

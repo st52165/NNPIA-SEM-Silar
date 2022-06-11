@@ -25,6 +25,4 @@ public class IncidentDto {
     private ZonedDateTime validityTo;
 
     private Long regionID;
-
-    private Long wagonID;
 }

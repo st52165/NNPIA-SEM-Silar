@@ -14,5 +14,4 @@ public class WagonInfoDto {
     private Integer weight;
 
     CarrierInfoDto carrierDto;
-
 }

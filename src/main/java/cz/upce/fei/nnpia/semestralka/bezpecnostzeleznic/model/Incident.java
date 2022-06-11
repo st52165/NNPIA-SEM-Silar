@@ -7,7 +7,9 @@ import org.geolatte.geom.Geometry;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -41,8 +43,13 @@ public class Incident {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private IncidentType incidentType;
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    private Wagon wagon;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "incident_wagons",
+            joinColumns = @JoinColumn(name = "incident_id"),
+            inverseJoinColumns = @JoinColumn(name = "wagon_id"))
+    private Set<Wagon> wagons = new HashSet<>();
 
     @ManyToOne(optional = false)
     private Region region;

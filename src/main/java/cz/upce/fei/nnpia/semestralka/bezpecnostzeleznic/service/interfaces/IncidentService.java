@@ -2,6 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentWagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Incident;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.IncidentType;
 
@@ -24,4 +25,10 @@ public interface IncidentService {
     IncidentInfoDto edit(IncidentDto incidentDto, Long id);
 
     IncidentInfoDto delete(Long id);
+
+    IncidentInfoDto addWagon(Long id, IncidentWagonDto incidentWagonDto);
+
+    IncidentInfoDto updateWagon(Long id, IncidentWagonDto incidentWagonDto);
+
+    IncidentInfoDto removeWagon(Long id, IncidentWagonDto incidentWagonDto);
 }

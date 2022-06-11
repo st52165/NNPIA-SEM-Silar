@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.util.Objects;
+import java.util.Set;
 
 import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.IncidentServiceImpl.INCIDENT_ID_NOT_FOUND;
 import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.IncidentServiceImpl.INCIDENT_PERMISSION;
@@ -72,7 +73,6 @@ public class ConversionService {
     public IncidentInfoDto toIncidentInfoDto(Incident incident) {
         IncidentInfoDto incidentDto = modelMapper.map(incident, IncidentInfoDto.class);
         incidentDto.setPosition(incident.getPosition().getPositionN(0));
-        incidentDto.setWagonDto(toWagonInfoDto(incident.getWagon()));
         incidentDto.setUserInfoDto(toUserInfoDto(incident.getUser()));
         incidentDto.setRegionDto(toRegionDto(incident.getRegion()));
         return incidentDto;
@@ -114,10 +114,33 @@ public class ConversionService {
             incident.setRegion(regionRepository.findById(incidentDto.getRegionID()).orElseThrow(()
                     -> new NotFoundException("Region s id: '" + incidentDto.getRegionID() + "' nebyl nalezen.")));
         }
-        if (!isNullOrEmpty(incidentDto.getWagonID())) {
-            incident.setWagon(wagonRepository.findByIdAndCarrier(incidentDto.getWagonID(), incident.getUser().getCarrier())
+        return incident;
+    }
+
+    public Incident toIncident(IncidentWagonDto incidentWagonDto, Incident incident, ConversionAction action) {
+        incident = incident == null ? new Incident() : incident;
+        Set<Wagon> incidentWagons = incident.getWagons();
+
+        if (!isNullOrEmpty(incidentWagonDto.getWagonID())) {
+            Wagon updatingWagon = wagonRepository.findByIdAndCarrier(incidentWagonDto.getWagonID(), incident.getUser().getCarrier())
                     .orElseThrow(() -> new NotFoundException(String.format(WAGON_ID_NOT_FOUND
-                            + " " + WAGON_PERMISSION, incidentDto.getWagonID()))));
+                            + " " + WAGON_PERMISSION, incidentWagonDto.getWagonID())));
+
+            switch (action) {
+                case REMOVE:
+                    incidentWagons.remove(updatingWagon);
+                    break;
+                case ADD:
+                case UPDATE:
+                    if (incidentWagons.contains(updatingWagon) && action.equals(ConversionAction.UPDATE)) {
+                        incidentWagons.remove(updatingWagon);
+                        break;
+                    } else {
+                        incidentWagons.add(updatingWagon);
+                    }
+                    break;
+            }
+            incident.setWagons(incidentWagons);
         }
         return incident;
     }
