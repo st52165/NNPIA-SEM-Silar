@@ -22,9 +22,5 @@ public interface WagonService {
 
     WagonInfoDto delete(Long wagonID);
 
-    WagonInfoDto addIncident(Long wagonID, Long incidentId);
-
-    WagonInfoDto deleteIncident(Long wagonID, Long incidentId);
-
     List<WagonInfoDto> getWagonsByCarrierName(String carrierName);
 }

@@ -3,7 +3,9 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto;
 import lombok.Data;
 
 @Data
-public class RegionDto {
+public class RegionInfoDto {
+
+    private Long id;
 
     private String name;
 

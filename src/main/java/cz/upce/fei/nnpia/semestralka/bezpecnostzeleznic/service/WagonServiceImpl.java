@@ -86,41 +86,8 @@ public class WagonServiceImpl implements WagonService {
     }
 
     @Override
-    public WagonInfoDto addIncident(Long wagonID, Long incidentId) {
-        String errorPrompt = "Chyba při přiřazování incidentu k vagonu!";
-        return updateIncident(wagonID, incidentId, errorPrompt, true);
-    }
-
-    @Override
-    public WagonInfoDto deleteIncident(Long wagonID, Long incidentId) {
-        String errorPrompt = "Chyba při odebírání incidentu z vagonu!";
-        return updateIncident(wagonID, incidentId, errorPrompt, false);
-    }
-
-    @Override
     public List<WagonInfoDto> getWagonsByCarrierName(String carrierName) {
         return wagonRepository.findAllByCarrier_Name(carrierName).stream()
                 .map(conversionService::toWagonInfoDto).collect(Collectors.toList());
-    }
-
-    private WagonInfoDto updateIncident(Long wagonID, Long incidentId, String errorPrompt, boolean addingIncident) {
-//        try {
-//            Wagon updatingWagon = getWagonFromID(wagonID);
-//            Incident updatingIncident = incidentRepository.findById(incidentId).orElseThrow(()
-//                    -> new NotFoundException(String.format(INCIDENT_ID_NOT_FOUND, incidentId)));
-//
-//            if (addingIncident) {
-//                updatingIncident.setWagon(updatingWagon);
-//            } else if (updatingIncident.getWagon().equals(updatingWagon)) {
-//                updatingIncident.setWagon(null);
-//            }
-//
-//            incidentRepository.save(updatingIncident);
-//            return updatingWagon;
-//        } catch (HttpServerErrorException e) {
-//            throw new HttpServerErrorException(HttpStatus.BAD_REQUEST,
-//                    errorPrompt + System.lineSeparator() + e.getStatusText());
-//        }
-        return null;
     }
 }

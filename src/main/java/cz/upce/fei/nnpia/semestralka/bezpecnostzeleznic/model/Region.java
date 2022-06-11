@@ -20,6 +20,9 @@ public class Region {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(length = 25)
+    private String shortName;
+
     @OneToMany(mappedBy = "region", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<Incident> incidents;

@@ -30,5 +30,5 @@ public class IncidentInfoDto {
 
     UserInfoDto userInfoDto;
 
-    RegionDto regionDto;
+    RegionInfoDto regionDto;
 }

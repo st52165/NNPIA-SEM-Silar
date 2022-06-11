@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.IncidentServiceImpl.INCIDENT_ID_NOT_FOUND;
 import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.IncidentServiceImpl.INCIDENT_PERMISSION;
+import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.RegionServiceImpl.REGION_ID_NOT_FOUND;
 import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.WagonServiceImpl.WAGON_ID_NOT_FOUND;
 import static cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.WagonServiceImpl.WAGON_PERMISSION;
 import static org.geolatte.geom.builder.DSL.g;
@@ -74,7 +76,10 @@ public class ConversionService {
         IncidentInfoDto incidentDto = modelMapper.map(incident, IncidentInfoDto.class);
         incidentDto.setPosition(incident.getPosition().getPositionN(0));
         incidentDto.setUserInfoDto(toUserInfoDto(incident.getUser()));
-        incidentDto.setRegionDto(toRegionDto(incident.getRegion()));
+        incidentDto.setRegionDto(toRegionInfoDto(incident.getRegion()));
+        incidentDto.setWagons(incident.getWagons()
+                .stream().map(this::toWagonInfoDto)
+                .collect(Collectors.toList()));
         return incidentDto;
     }
 
@@ -112,7 +117,7 @@ public class ConversionService {
         }
         if (!isNullOrEmpty(incidentDto.getRegionID())) {
             incident.setRegion(regionRepository.findById(incidentDto.getRegionID()).orElseThrow(()
-                    -> new NotFoundException("Region s id: '" + incidentDto.getRegionID() + "' nebyl nalezen.")));
+                    -> new NotFoundException(String.format(REGION_ID_NOT_FOUND, incidentDto.getRegionID()))));
         }
         return incident;
     }
@@ -190,8 +195,19 @@ public class ConversionService {
         return damage;
     }
 
-    public RegionDto toRegionDto(Region region) {
-        return modelMapper.map(region, RegionDto.class);
+    public RegionInfoDto toRegionInfoDto(Region region) {
+        return modelMapper.map(region, RegionInfoDto.class);
+    }
+
+    public Region toRegion(RegionDto regionDto, Region region) {
+        region = region == null ? new Region() : region;
+        if (!isNullOrEmpty(regionDto.getName())) {
+            region.setName(regionDto.getName());
+        }
+        if (!isNullOrEmpty(regionDto.getShortName())) {
+            region.setShortName(regionDto.getShortName());
+        }
+        return region;
     }
 
 

@@ -61,22 +61,4 @@ public class WagonController {
     public WagonInfoDto deleteWagon(@PathVariable("id") final Long wagonID) {
         return wagonService.delete(wagonID);
     }
-
-    @PreAuthorize("hasAnyRole('ADMIN_DS', 'ADMIN_SZ')")
-    @PutMapping(path = "/{id}/incident")
-    public WagonInfoDto addIncident(@PathVariable("id") final Long id, @RequestBody final Long incidentId) {
-        return wagonService.addIncident(id, incidentId);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN_DS', 'ADMIN_SZ')")
-    @DeleteMapping(path = "/{id}/incident")
-    public WagonInfoDto deleteIncident(@PathVariable("id") final Long id, @RequestBody final Long incidentId) {
-        return wagonService.deleteIncident(id, incidentId);
-    }
-
-//    @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
-//    @GetMapping(path = "/all")
-//    public ResponseEntity<?> getAllWagons(@CurrentUser final UserPrinciple currentUser) {
-//        return ResponseEntity.ok(wagonService.getAllWagons(currentUser));
-//    }
 }

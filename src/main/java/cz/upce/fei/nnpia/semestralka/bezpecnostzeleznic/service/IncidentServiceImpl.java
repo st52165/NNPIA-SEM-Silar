@@ -45,12 +45,14 @@ public class IncidentServiceImpl implements IncidentService {
 
     @Override
     public List<IncidentInfoDto> getAllByCarrier(String carrierName) {
-        return incidentRepository.findAllByUser_Carrier_Name(carrierName).stream().map(conversionService::toIncidentInfoDto).collect(Collectors.toList());
+        return incidentRepository.findAllByUser_Carrier_Name(carrierName).stream()
+                .map(conversionService::toIncidentInfoDto).collect(Collectors.toList());
     }
 
     @Override
     public List<IncidentInfoDto> getAllByIncidentType(IncidentType incidentType) {
-        return incidentRepository.findAllByIncidentType(incidentType).stream().map(conversionService::toIncidentInfoDto).collect(Collectors.toList());
+        return incidentRepository.findAllByIncidentType(incidentType).stream()
+                .map(conversionService::toIncidentInfoDto).collect(Collectors.toList());
     }
 
     @Override
