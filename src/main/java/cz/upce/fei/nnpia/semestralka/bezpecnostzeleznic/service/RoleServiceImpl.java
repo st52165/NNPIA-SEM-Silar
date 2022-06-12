@@ -19,7 +19,7 @@ public class RoleServiceImpl implements RoleService {
     public Role findByName(RoleName roleName) {
         return roleRepository.findByName(roleName).orElseThrow(()
                 -> new NotFoundException(String
-                .format("Role '%s' nebyla nalezena.", roleName)));
+                .format("Role s názvem: '%s' nebyla nalezena.", roleName)));
     }
 
 }
