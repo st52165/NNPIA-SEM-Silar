@@ -1,5 +1,6 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Role;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.RoleName;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.RoleRepository;
@@ -16,8 +17,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     public Role findByName(RoleName roleName) {
-        return roleRepository.findByName(roleName).
-                orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role nebyla nalezena."));
+        return roleRepository.findByName(roleName).orElseThrow(()
+                -> new NotFoundException(String
+                .format("Role '%s' nebyla nalezena.", roleName)));
     }
 
 }
