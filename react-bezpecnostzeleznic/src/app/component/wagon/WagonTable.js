@@ -10,7 +10,7 @@ import filterFactory, {selectFilter, textFilter} from "react-bootstrap-table2-fi
 import paginationFactory from "react-bootstrap-table2-paginator";
 
 
-function Wagon() {
+function WagonTable() {
     const [wagons, setWagons] = useState([]);
     const [wagonTypes, setWagonTypes] = useState([]);
     const [carriers, setCarriers] = useState([]);
@@ -111,4 +111,4 @@ function Wagon() {
     );
 }
 
-export default Wagon;
+export default WagonTable;
