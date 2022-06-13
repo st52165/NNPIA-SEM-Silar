@@ -210,6 +210,10 @@ public class ConversionService {
         return region;
     }
 
+    public WagonTypeInfoDto toWagonTypeInfoDto(WagonType wagonType) {
+        return new WagonTypeInfoDto(wagonType.name());
+    }
+
 
     private static boolean isNullOrEmpty(String s) {
         return s == null || s.trim().isEmpty();
