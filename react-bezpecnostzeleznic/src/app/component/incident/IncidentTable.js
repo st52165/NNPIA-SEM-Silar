@@ -2,37 +2,71 @@ import React, {useCallback, useEffect, useState} from "react";
 import {Alert} from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import filterFactory, {textFilter, selectFilter, customFilter, dateFilter} from 'react-bootstrap-table2-filter';
-import AppNavbar from "../navbar/AppNavbar";
+import filterFactory, {textFilter, selectFilter, dateFilter} from 'react-bootstrap-table2-filter';
+import AppNavbar from "../nav/AppNavbar";
 import {Container} from "reactstrap";
-import IncidentService from "../../services/IncidentService";
-import RegionService from "../../services/RegionService";
-import UserService from "../../services/UserService";
-import AuthenticationService from "../../services/AuthenticationService";
-import CarrierService from "../../services/CarrierService";
-import {RangeFilter} from "./RangeFilter";
+import IncidentService from "../../service/IncidentService";
+import RegionService from "../../service/RegionService";
+import UserService from "../../service/UserService";
+import CarrierService from "../../service/CarrierService";
+import DateFormatter from "../../service/DateFormatter";
 import {useHistory} from "react-router-dom";
-import DateFormatter from "../../services/DateFormatter";
+import AuthenticationService from "../../service/AuthenticationService";
 
-function IncidentTable(){
+
+function IncidentTable() {
     const [incidents, setIncidents] = useState([]);
+    const [incidentTypes, setIncidentTypes] = useState([]);
     const [regions, setRegions] = useState([]);
-    const [usernames, setUsernames] = useState([]);
+    const [users, setUsers] = useState([]);
     const [carriers, setCarriers] = useState([]);
-    const [isAdmin, setAdmin] = useState(false);
     const history = useHistory()
 
 
     const parseIncidents = useCallback((response) => {
-        if(response){ setIncidents(response.map(it => {
-            let date = it.incidentTime;
-            it.incidentTime = new Date(date);
-            return it})); }
+        if (response) {
+            setIncidents(response.map(it => {
+                return it;
+            }));
+        }
+    }, []);
+    const parseUsers = useCallback((response) => {
+        if (response) {
+            setUsers(response.map(user => {
+                return user;
+            }));
+        }
     }, []);
 
     useEffect(() => {
-        IncidentService.getAllIncidents().then((response) => { parseIncidents(response.data); });
+        if (AuthenticationService.isAdminDS()) {
+            CarrierService.getCarriers().then(response => {
+                setCarriers(response.data);
+            });
+        } else {
+            setCarriers([]);
+        }
+    }, [setCarriers]);
+
+    useEffect(() => {
+        if (AuthenticationService.isAdminDS()) {
+            IncidentService.getAllIncidents()
+                .then((response) => {
+                    parseIncidents(response.data);
+                });
+        } else {
+            IncidentService.getAllIncidentsByCurrentUser()
+                .then((response) => {
+                    parseIncidents(response.data);
+                });
+        }
     }, [parseIncidents]);
+
+    useEffect(() => {
+        IncidentService.getAllIncidentTypes().then((response) => {
+            setIncidentTypes(response.data);
+        });
+    }, []);
 
     useEffect(() => {
         RegionService.getRegions().then(response => {
@@ -41,30 +75,17 @@ function IncidentTable(){
     }, [setRegions]);
 
     useEffect(() => {
-        UserService.getCarriersUsers().then(response => {
-            setUsernames(response.data);
+        UserService.getUsersList().then(response => {
+            parseUsers(response.data);
         });
-    }, [setUsernames]);
+    }, [parseUsers]);
 
-    useEffect(() => {
-        const authorities = AuthenticationService.getAuthorities();
-        const admin = authorities.find(it => it.authority === 'ROLE_ADMIN_SZ')
-        if (admin != null){
-            setAdmin(true);
-            CarrierService.getCarriers().then(response => {
-                setCarriers(response.data);
-            });
-        }else {
-            setCarriers([]);
-            setAdmin(false);
-        }
-    }, [setCarriers]);
 
-    const incidentOptions = {
-        'Bezpečnostní incident' : 'Bezpečnostní incident',
-        'Požární incident' : 'Požární incident',
-        'Předpokládaný incident': 'Předpokládaný incident'
-    };
+    const incidentTypeOptions = incidentTypes.map(type => (
+        {
+            value: type.name,
+            label: type.name
+        }));
 
     const regionOptions = regions.map(region => (
         {
@@ -73,10 +94,10 @@ function IncidentTable(){
         }
     ));
 
-    const usernameOptions = usernames.map(username => (
+    const usernameOptions = users.map(user => (
         {
-            value: username,
-            label: username
+            value: user.username,
+            label: `${user.firstname} ${user.lastname}`
         }
     ));
 
@@ -86,63 +107,120 @@ function IncidentTable(){
             label: carrier.name
         }
     ));
+    const booleanOptions =
+        [{
+            value: "Ano",
+            label: "Ano"
+        },
+            {
+                value: "Ne",
+                label: "Ne"
+            }];
+
+    const datumFiltr = dateFilter({
+        style: {display: 'inline-grid', width: '100%'}
+    });
+    const userFormatter = (user) => {
+        return `${user.firstname} ${user.lastname}`;
+    }
+    const userFilterValue = (user) => {
+        return user.username;
+    }
+    const booleanFormatter = (isTrue) => {
+        return isTrue ? "Ano" : "Ne";
+    }
 
     const columns = [{
         dataField: 'id',
         text: 'Id',
         filter: textFilter(),
+        isKey: true,
         sort: true
-    }, {
-        dataField: 'regionName',
-        text: 'Region',
-        filter: selectFilter({
-            options: () => regionOptions
-        })
-    }, {
-        dataField: 'wagonId',
-        text: 'Vagón',
-        filter: textFilter()
-    }, {
-        dataField: 'tenementsName',
-        text: 'Nemovitost',
-        filter: textFilter()
-    }, {
-        dataField: 'username',
-        text: 'Zadal Uživatel',
-        filter: selectFilter({
-            options: () => usernameOptions
-        })
     }, {
         dataField: 'incidentType',
         text: 'Typ incidentu',
         filter: selectFilter({
-            options: () => incidentOptions
-        })
-    }, {
-        dataField: 'carrierName',
-        text: 'Dopravní společnost',
-        filter: isAdmin ? selectFilter({
-            options: () => carrierOptions
-        }) : null
-    }, {
-        dataField: 'incidentTime',
-        text: 'Čas incidentu',
-        formatter: DateFormatter.formatDateWithTime,
-        filter: dateFilter(),
+            options: () => incidentTypeOptions
+        }),
         sort: true
-    }];
+    }, {
+        dataField: 'regionDto.name',
+        text: 'Region',
+        filter: selectFilter({
+            options: () => regionOptions
+        }),
+        sort: true
+    }, {
+        dataField: 'userInfoDto',
+        formatter: userFormatter,
+        filterValue: userFilterValue,
+        text: 'Zadal Uživatel',
+        filter: selectFilter({
+            options: () => usernameOptions
+        }),
+        sort: true
+    }, {
+        dataField: 'userInfoDto.carrierInfoDto.name',
+        text: 'Dopravní společnost',
+        filter: AuthenticationService.isAdminDS() ? selectFilter({
+            options: () => carrierOptions
+        }) : null,
+        sort: true
+    }, {
+        dataField: 'position',
+        text: "GPS Poloha",
+        formatter: (cell) => (
+            <div>
+                <a href={'https://mapy.cz/zakladni?q='
+                    + cell.lat + (cell.lat < 0 ? 'S' : 'N')
+                    + ',' + cell.lon + (cell.lon < 0 ? 'W' : 'E')} target={"_blank"}>{
+                    cell.lat}° {cell.lat < 0 ? 'S' : 'N'}, {
+                    cell.lon}° {cell.lon < 0 ? 'W' : 'E'}</a>
+            </div>
+        ),
+        sort: true
+    },
+        {
+            dataField: 'validityFrom',
+            text: 'Začátek incidentu',
+            filter: datumFiltr,
+            formatter: DateFormatter.formatDateWithTime,
+            sort: true
+        }, {
+            dataField: 'validityTo',
+            text: 'Ukončení incidentu',
+            filter: datumFiltr,
+            formatter: DateFormatter.formatDateWithTime,
+            sort: true
+        },
+        {
+            dataField: 'criminalOffense',
+            text: 'Trestný čin',
+            filter: selectFilter({
+                options: () => booleanOptions
+            }),
+            formatter: booleanFormatter,
+            filterValue: booleanFormatter,
+            sort: true
+        },
+        {
+            dataField: 'solvedByPolice',
+            text: 'Řešeno policí',
+            filter: selectFilter({
+                options: () => booleanOptions
+            }),
+            formatter: booleanFormatter,
+            filterValue: booleanFormatter,
+            sort: true
+        }];
 
-    const handleOnSelect = (row) => {
-        let path = '/incident/';
-        if (row.incidentType === 'Bezpečnostní incident'){
-            path += 'securityIncident'
-        }else if (row.incidentType === 'Požární incident'){
-            path += 'fireIncident'
-        }else {
-            path += 'anticipatedIncident'
+    const handleOnSelect = (row, isSelect, rowIndex, e) => {
+        if (e.target.cellIndex == null || e.target.cellIndex == 5) return;
+        else {
+            debugger;
+            let path = '/incident/' + row.id;
+            history.push(path);
         }
-        path += '/' + row.detailIncidentId;
-        history.push(path);
     }
 
     const selectRow = {
@@ -162,8 +240,9 @@ function IncidentTable(){
             <Alert variant="info">
                 <h1>Incidenty</h1>
             </Alert>
-            <BootstrapTable keyField='id' data={ incidents } columns={ columns } pagination={ paginationFactory() }
-                            filter={ filterFactory() } selectRow={ selectRow } defaultSorted={ defaultSorted } />
+            <BootstrapTable keyField='id' data={incidents} columns={columns} pagination={paginationFactory()}
+                            filter={filterFactory()} selectRow={selectRow} defaultSorted={defaultSorted}
+                            hover bootstrap4/>
         </div>
     );
 

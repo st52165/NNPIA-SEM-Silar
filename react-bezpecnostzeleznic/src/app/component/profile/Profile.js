@@ -3,6 +3,7 @@ import {Container} from "reactstrap";
 import {Alert} from "react-bootstrap";
 import React, {useState, useEffect} from "react";
 import UserService from "../../service/UserService";
+import AuthenticationService from "../../service/AuthenticationService";
 
 function Profile() {
     const [username, setUsername] = useState('');

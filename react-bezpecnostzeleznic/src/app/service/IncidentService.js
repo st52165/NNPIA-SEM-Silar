@@ -17,8 +17,14 @@ const IncidentService = {
     getAllIncidents: async function () {
         return await axios.get(`${SERVER_PREFIX}/api/incident/all`);
     },
-    getAllIncidentsByName: async function (carrierName) {
+    getAllIncidentsByCurrentUser: async function () {
+        return await axios.get(`${SERVER_PREFIX}/api/incident/user/all`);
+    },
+    getAllIncidentsByCarrierName: async function (carrierName) {
         return await axios.get(`${SERVER_PREFIX}/api/incident/carrier/${carrierName}`);
+    },
+    getAllIncidentTypes: async function () {
+        return await axios.get(`${SERVER_PREFIX}/api/incident/type`);
     },
     getAllIncidentsByType: async function (incidentType) {
         return await axios.get(`${SERVER_PREFIX}/api/incident/type/${incidentType}`);
