@@ -1,5 +1,6 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.controller;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.EnumNameDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentWagonDto;
@@ -29,6 +30,12 @@ public class IncidentController {
     @GetMapping("/carrier/{carrierName}")
     public List<IncidentInfoDto> getAllByCarrier(@PathVariable("carrierName") String carrierName) {
         return incidentService.getAllByCarrier(carrierName);
+    }
+
+    @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
+    @GetMapping(path = "/type")
+    public List<EnumNameDto> getAllIncidentTypes() {
+        return incidentService.getAllIncidentTypes();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN_DS', 'USER_DS')")

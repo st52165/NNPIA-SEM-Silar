@@ -2,7 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonInfoDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonTypeInfoDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.EnumNameDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.*;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.WagonRepository;
@@ -94,9 +94,9 @@ public class WagonServiceImpl implements WagonService {
     }
 
     @Override
-    public List<WagonTypeInfoDto> getAllWagonTypes() {
+    public List<EnumNameDto> getAllWagonTypes() {
         return Arrays.stream(WagonType.values())
-                .map(conversionService::toWagonTypeInfoDto)
+                .map(ConversionService::toEnumNameDto)
                 .collect(Collectors.toList());
     }
 }

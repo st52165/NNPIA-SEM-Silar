@@ -2,7 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.controller;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonInfoDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonTypeInfoDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.EnumNameDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.WagonType;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.WagonService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +29,7 @@ public class WagonController {
 
     @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
     @GetMapping(path = "/type")
-    public List<WagonTypeInfoDto> getAllWagonTypes() {
+    public List<EnumNameDto> getAllWagonTypes() {
         return wagonService.getAllWagonTypes();
     }
 

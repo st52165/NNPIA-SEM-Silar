@@ -1,5 +1,6 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.EnumNameDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentWagonDto;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,6 +103,14 @@ public class IncidentServiceImpl implements IncidentService {
     public IncidentInfoDto removeWagon(Long id, IncidentWagonDto incidentWagonDto) {
         return conversionService.toIncidentInfoDto(incidentRepository.save(conversionService.toIncident(
                 incidentWagonDto, getIncidentFromIDAndLoggedUserCarrier(id), ConversionAction.REMOVE)));
+    }
+
+    @Override
+    public List<EnumNameDto> getAllIncidentTypes() {
+        return Arrays.stream(IncidentType.values())
+                .map(ConversionService::toEnumNameDto)
+                .collect(Collectors.toList());
+
     }
 
 

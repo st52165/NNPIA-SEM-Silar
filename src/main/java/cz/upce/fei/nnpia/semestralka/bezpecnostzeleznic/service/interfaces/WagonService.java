@@ -2,7 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonInfoDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.WagonTypeInfoDto;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.EnumNameDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.WagonType;
 
 import java.util.List;
@@ -25,5 +25,5 @@ public interface WagonService {
 
     List<WagonInfoDto> getWagonsByCarrierName(String carrierName);
 
-    List<WagonTypeInfoDto> getAllWagonTypes();
+    List<EnumNameDto> getAllWagonTypes();
 }

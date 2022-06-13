@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class WagonTypeInfoDto {
+public class EnumNameDto {
     private String name;
 }

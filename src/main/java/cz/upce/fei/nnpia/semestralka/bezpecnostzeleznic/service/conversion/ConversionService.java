@@ -210,8 +210,8 @@ public class ConversionService {
         return region;
     }
 
-    public WagonTypeInfoDto toWagonTypeInfoDto(WagonType wagonType) {
-        return new WagonTypeInfoDto(wagonType.name());
+    public static EnumNameDto toEnumNameDto(Enum<?> enumName) {
+        return new EnumNameDto(enumName.name());
     }
 
 
