@@ -17,4 +17,5 @@ public class UserInfoDto {
 
     private String role;
 
+    private CarrierInfoDto carrierInfoDto;
 }

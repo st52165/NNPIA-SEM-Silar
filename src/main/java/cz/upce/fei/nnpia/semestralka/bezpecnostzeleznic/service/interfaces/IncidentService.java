@@ -1,17 +1,16 @@
 package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces;
 
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.EnumNameDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.IncidentWagonDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.EnumNameDto;
-import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.Incident;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.IncidentType;
 
 import java.util.List;
 
 public interface IncidentService {
 
-    List<Incident> getAll();
+    List<IncidentInfoDto> getAll();
 
     List<IncidentInfoDto> getAllByUser();
 

@@ -23,6 +23,12 @@ public class IncidentController {
     @PreAuthorize("hasAnyRole('ADMIN_DS', 'USER_DS')")
     @GetMapping("/all")
     public List<IncidentInfoDto> getAll() {
+        return incidentService.getAll();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN_DS', 'USER_DS')")
+    @GetMapping("/user/all")
+    public List<IncidentInfoDto> getAllByUser() {
         return incidentService.getAllByUser();
     }
 

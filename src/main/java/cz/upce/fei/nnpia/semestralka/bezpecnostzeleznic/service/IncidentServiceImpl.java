@@ -36,8 +36,10 @@ public class IncidentServiceImpl implements IncidentService {
     private final AuthenticationService authenticationService;
 
     @Override
-    public List<Incident> getAll() {
-        return incidentRepository.findAll();
+    public List<IncidentInfoDto> getAll() {
+        return incidentRepository.findAll().stream()
+                .map(conversionService::toIncidentInfoDto)
+                .collect(Collectors.toList());
     }
 
     @Override

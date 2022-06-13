@@ -62,6 +62,7 @@ public class ConversionService {
     public UserInfoDto toUserInfoDto(User user) {
         UserInfoDto infoDTO = modelMapper.map(user, UserInfoDto.class);
         infoDTO.setRole(user.getRole().getName().name());
+        infoDTO.setCarrierInfoDto(toCarrierInfoDto(user.getCarrier()));
         return infoDTO;
     }
 
