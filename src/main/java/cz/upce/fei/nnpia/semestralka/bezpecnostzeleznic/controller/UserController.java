@@ -49,19 +49,19 @@ public class UserController {
         return userService.isUsernameExist(username);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
+    @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS')")
     @GetMapping(path = "/list")
     public List<UserInfoDto> getUserList() {
         return userService.getUserList();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
+    @PreAuthorize("hasAnyRole('ADMIN_DS')")
     @DeleteMapping(path = "")
     public UserInfoDto deleteUser(@CurrentUser final UserPrinciple currentUser) {
         return userService.deleteUser(currentUser.getId());
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN_SZ', 'ADMIN_DS')")
+    @PreAuthorize("hasAnyRole('ADMIN_DS')")
     @DeleteMapping(path = "/{id}")
     public UserInfoDto deleteUserById(@PathVariable("id") final Long id) {
         return userService.deleteUser(id);

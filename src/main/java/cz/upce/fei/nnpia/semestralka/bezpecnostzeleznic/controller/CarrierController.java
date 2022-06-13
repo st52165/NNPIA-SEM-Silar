@@ -18,7 +18,7 @@ public class CarrierController {
         this.carrierService = carrierService;
     }
 
-    @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
+    @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS')")
     @GetMapping
     public List<CarrierInfoDto> getCarriers() {
         return carrierService.getCarriersList();

@@ -2,6 +2,7 @@ package cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service;
 
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.dto.UserInfoDto;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.exception.NotFoundException;
+import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.RoleName;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.model.User;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.UserRepository;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionService;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         Collection<User> users;
         User loggedUser = authenticationService.getLoggedUser();
 
-        if (Objects.isNull(loggedUser.getCarrier())) {
+        if (loggedUser.getRole().getName().equals(RoleName.ROLE_ADMIN_DS)) {
             users = userRepository.findAll();
         } else {
             users = loggedUser.getCarrier().getUsers();
