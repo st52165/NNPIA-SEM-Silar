@@ -20,7 +20,7 @@ const WagonService = {
         return await axios.get(`${SERVER_PREFIX}/api/wagons`);
     },
     getAllWagonTypes: async function () {
-        return await axios.get(`${SERVER_PREFIX}/api/wagons/type/`);
+        return await axios.get(`${SERVER_PREFIX}/api/wagons/type`);
     },
     updateWagons: async function () {
         return await axios.get(`${SERVER_PREFIX}/api/wagons/updateWagons`);

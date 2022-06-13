@@ -9,7 +9,7 @@ function Profile() {
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [email, setEmail] = useState('');
-    const [roles, setRoles] = useState('');
+    const [roles, setRole] = useState('');
     const [isPending, setIsPending] = useState(true);
     const [error, setError] = useState('');
 
@@ -24,7 +24,7 @@ function Profile() {
                         setFirstname(response.data.firstname);
                         setLastname(response.data.lastname);
                         setEmail(response.data.email);
-                        setRoles(response.data.roles);
+                        setRole(response.data.role);
                         setIsPending(false);
                     },
                     error => (error.data && error.data.message && setError(error.data.message))

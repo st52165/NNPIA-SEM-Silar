@@ -2,7 +2,6 @@ import {
     Collapse,
     Nav,
     Navbar,
-    NavbarBrand,
     NavbarToggler,
     NavbarText,
     NavItem,
@@ -47,13 +46,10 @@ function AppNavbar(props) {
                 <NavLink href="/#/home">Domů</NavLink>
                 {(showUserDS || showAdminDS) && <NavLink href="/#/profile">Uživatel</NavLink>}
                 {(showUserDS) && <NavLink href="/#/wagon">Vagóny</NavLink>}
-                {(showUserDS) && <NavLink href="/#/tenementsTable">Nemovitosti</NavLink>}
-                {(showUserDS) && <NavLink href="/#/incidentTable">Incidenty</NavLink>}
             </Nav>
-            {(showUserDS) && <NavDropdown title="Nahlásit incident" id="basic-nav-dropdown">
-                <NavDropdown.Item href="#incident/fireIncident">Požární incident</NavDropdown.Item>
-                <NavDropdown.Item href="#incident/anticipatedIncident">Předpokládaný incident</NavDropdown.Item>
-                <NavDropdown.Item href="#incident/securityIncident">Bezpečnostní incident</NavDropdown.Item>
+            {(showUserDS) && <NavDropdown title="Incidenty" id="basic-nav-dropdown">
+                <NavDropdown.Item href="/#/incident">Nahlásit incident</NavDropdown.Item>
+                <NavDropdown.Item href="/#/incidentTable">Všechny incidenty</NavDropdown.Item>
             </NavDropdown>}
             <NavbarToggler onClick={toggle}/>
             {(showAdminDS) && <NavLink href="/#/signup">Vytvořit účet</NavLink>}

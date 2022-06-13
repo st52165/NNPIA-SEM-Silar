@@ -7,6 +7,7 @@ import Login from "./app/component/authentication/Login";
 import {HashRouter, Route, Switch} from "react-router-dom";
 import PrivateRoute from './app/component/route/PrivateRoute'
 import Profile from './app/component/profile/Profile'
+import Wagon from './app/component/wagon/Wagon'
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/home" exact={true} component={Home}/>
                 <Route path="/signin" exact={true} component={Login}/>
                 <Route path="/signup" exact={true} component={SignUp}/>
+                <Route path="/wagon" exact={true} component={Wagon}/>
 
 
                 <PrivateRoute path="/profile" exact={true} component={Profile}/>
