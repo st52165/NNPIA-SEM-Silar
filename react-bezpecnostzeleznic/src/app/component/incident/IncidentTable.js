@@ -214,10 +214,8 @@ function IncidentTable() {
             sort: true
         }];
 
-    const handleOnSelect = (row, isSelect, rowIndex, e) => {
-        if (e.target.cellIndex == null || e.target.cellIndex == 5) return;
-        else {
-            debugger;
+    const handleOnSelect = (row, _isSelect, _rowIndex, e) => {
+        if (!(e.target.cellIndex == null || e.target.cellIndex === 5)) {
             let path = '/incident/' + row.id;
             history.push(path);
         }
