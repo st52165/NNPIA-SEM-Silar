@@ -11,7 +11,6 @@ import org.geolatte.geom.crs.CoordinateSystemAxis;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -90,7 +89,7 @@ public class ConversionService {
             incident.setUser(authenticationService.getLoggedUser());
         }
         if (!isNullOrEmpty(incidentDto.getDescription())) {
-            incident.setDescription(incident.getDescription());
+            incident.setDescription(incidentDto.getDescription());
         }
         if (incidentDto.getIncidentType() != null) {
             incident.setIncidentType(incidentDto.getIncidentType());
@@ -111,10 +110,10 @@ public class ConversionService {
             incident.setPosition(point(WGS84, g(incidentDto.getGpsLon(), lat)));
         }
         if (incidentDto.getValidityFrom() != null) {
-            incident.setValidityFrom(incidentDto.getValidityFrom().toLocalDateTime().atZone(ZoneId.systemDefault()));
+            incident.setValidityFrom(incidentDto.getValidityFrom());
         }
         if (incidentDto.getValidityTo() != null) {
-            incident.setValidityTo(incidentDto.getValidityTo().toLocalDateTime().atZone(ZoneId.systemDefault()));
+            incident.setValidityTo(incidentDto.getValidityTo());
         }
         if (!isNullOrEmpty(incidentDto.getRegionID())) {
             incident.setRegion(regionRepository.findById(incidentDto.getRegionID()).orElseThrow(()
