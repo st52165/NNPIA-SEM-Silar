@@ -12,6 +12,7 @@ import CarrierService from "../../service/CarrierService";
 import DateFormatter from "../../service/DateFormatter";
 import {useHistory} from "react-router-dom";
 import AuthenticationService from "../../service/AuthenticationService";
+import IncidentFormatter from "../../service/IncidentFormatter"
 
 
 function IncidentTable() {
@@ -126,9 +127,6 @@ function IncidentTable() {
     const userFilterValue = (user) => {
         return user.username;
     }
-    const booleanFormatter = (isTrue) => {
-        return isTrue ? "Ano" : "Ne";
-    }
 
     const columns = [{
         dataField: 'id',
@@ -169,15 +167,7 @@ function IncidentTable() {
     }, {
         dataField: 'position',
         text: "GPS Poloha",
-        formatter: (cell) => (
-            <div>
-                <a href={'https://mapy.cz/zakladni?q='
-                    + cell.lat + (cell.lat < 0 ? 'S' : 'N')
-                    + ',' + cell.lon + (cell.lon < 0 ? 'W' : 'E')} target={"_blank"}>{
-                    cell.lat}° {cell.lat < 0 ? 'S' : 'N'}, {
-                    cell.lon}° {cell.lon < 0 ? 'W' : 'E'}</a>
-            </div>
-        ),
+        formatter: IncidentFormatter.gpsFormatter,
         sort: true
     },
         {
@@ -199,8 +189,8 @@ function IncidentTable() {
             filter: selectFilter({
                 options: () => booleanOptions
             }),
-            formatter: booleanFormatter,
-            filterValue: booleanFormatter,
+            formatter: IncidentFormatter.booleanFormatter,
+            filterValue: IncidentFormatter.booleanFormatter,
             sort: true
         },
         {
@@ -209,8 +199,8 @@ function IncidentTable() {
             filter: selectFilter({
                 options: () => booleanOptions
             }),
-            formatter: booleanFormatter,
-            filterValue: booleanFormatter,
+            formatter: IncidentFormatter.booleanFormatter,
+            filterValue: IncidentFormatter.booleanFormatter,
             sort: true
         }];
 

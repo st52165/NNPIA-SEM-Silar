@@ -10,6 +10,7 @@ import Profile from './app/component/profile/Profile'
 import WagonTable from './app/component/wagon/WagonTable'
 import IncidentTable from './app/component/incident/IncidentTable'
 import IncidentForm from "./app/component/incident/IncidentForm";
+import IncidentDetail from "./app/component/incident/IncidentDetail";
 
 function App() {
     return (
@@ -21,7 +22,7 @@ function App() {
                 <Route path="/signup" exact={true} component={SignUp}/>
                 <Route path="/wagon" exact={true} component={WagonTable}/>
                 <Route path="/incidentTable" exact={true} component={IncidentTable}/>
-                {/*<Route path="/incident/:id" exact={true} component={IncidentDetail}/>*/}
+                <Route path="/incident/:id" exact={true} component={IncidentDetail}/>
                 <Route path="/incident" exact={true} component={IncidentForm}/>
 
 
