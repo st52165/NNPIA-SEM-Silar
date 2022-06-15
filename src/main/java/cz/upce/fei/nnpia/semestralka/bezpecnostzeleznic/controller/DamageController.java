@@ -43,13 +43,13 @@ public class DamageController {
         return damageService.add(damageDto);
     }
 
-    @PreAuthorize("hasRole('ADMIN_SZ')")
+    @PreAuthorize("hasRole('ADMIN_DS')")
     @PutMapping("/{id}")
     public DamageInfoDto put(@PathVariable("id") final Long id, @Validated @RequestBody final DamageDto damageDto) {
         return damageService.edit(damageDto, id);
     }
 
-    @PreAuthorize("hasRole('ADMIN_SZ')")
+    @PreAuthorize("hasRole('ADMIN_DS')")
     @DeleteMapping("/{id}")
     public DamageInfoDto delete(@PathVariable("id") final Long id) {
         return damageService.delete(id);
