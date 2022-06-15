@@ -9,6 +9,8 @@ import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.repository.WagonReposito
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.conversion.ConversionService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.AuthenticationService;
 import cz.upce.fei.nnpia.semestralka.bezpecnostzeleznic.service.interfaces.WagonService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -34,9 +36,11 @@ public class WagonServiceImpl implements WagonService {
     }
 
     @Override
-    public List<WagonInfoDto> getWagonsList() {
-        return wagonRepository.findAll().stream()
-                .map(conversionService::toWagonInfoDto)
+    public List<WagonInfoDto> getWagonsList(Integer pageNumber, Integer pageSize, String sortBy, String direction) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        return wagonRepository.findAll(PageRequest.of(pageNumber - 1, pageSize,
+                        sortDirection, sortBy))
+                .stream().map(conversionService::toWagonInfoDto)
                 .collect(Collectors.toList());
     }
 

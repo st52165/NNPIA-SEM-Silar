@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface WagonService {
 
-    List<WagonInfoDto> getWagonsList();
+    List<WagonInfoDto> getWagonsList(Integer pageNumber, Integer pageSize, String sortBy, String direction);
 
     List<WagonInfoDto> getWagonsListByWagonType(WagonType wagonType);
 

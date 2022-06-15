@@ -23,8 +23,12 @@ public class WagonController {
 
     @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
     @GetMapping
-    public List<WagonInfoDto> getWagons() {
-        return wagonService.getWagonsList();
+    public List<WagonInfoDto> getWagons(
+            @RequestParam(defaultValue = "1") Integer pageNumber,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        return wagonService.getWagonsList(pageNumber, pageSize, sortBy, direction);
     }
 
     @PreAuthorize("hasAnyRole('USER_DS', 'ADMIN_DS', 'ADMIN_SZ')")
