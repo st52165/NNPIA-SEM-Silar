@@ -11,6 +11,7 @@ import WagonTable from './app/component/wagon/WagonTable'
 import IncidentTable from './app/component/incident/IncidentTable'
 import IncidentForm from "./app/component/incident/IncidentForm";
 import IncidentDetail from "./app/component/incident/IncidentDetail";
+import DamageEdit from "./app/component/damage/DamageEdit";
 
 function App() {
     return (
@@ -23,10 +24,10 @@ function App() {
                 <Route path="/wagon" exact={true} component={WagonTable}/>
                 <Route path="/incidentTable" exact={true} component={IncidentTable}/>
                 <Route path="/incident/:id" exact={true} component={IncidentDetail}/>
+                <PrivateRoute path="/incident/:incidentID/damage/:damageID" exact={true} component={DamageEdit}/>
+                <Route path="/incident/:incidentID/damage" exact={true} component={DamageEdit}/>
                 <Route path="/incident" exact={true} component={IncidentForm}/>
-
-
-                <PrivateRoute path="/profile" exact={true} component={Profile}/>
+                <Route path="/profile" exact={true} component={Profile}/>
             </Switch>
         </HashRouter>
     );

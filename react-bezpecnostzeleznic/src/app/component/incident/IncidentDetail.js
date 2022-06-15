@@ -7,7 +7,7 @@ import IncidentFormatter from "../../service/IncidentFormatter"
 import DateFormatter from "../../service/DateFormatter";
 import RegionFormatter from "../../service/RegionFormatter";
 import UserFormatter from "../../service/UserFormatter";
-import Damage from "../damage/Damage";
+import DamageTable from "../damage/DamageTable";
 
 function IncidentDetail() {
     const {id} = useParams();
@@ -23,7 +23,7 @@ function IncidentDetail() {
     let detail = (
         <div>
             {incident && <div>
-                <h1>Bezpečnostní incident č. {incident.id}</h1>
+                <h1>Detail incidentu č. {incident.id}</h1>
                 <div>
                     <h6 className={'fw-bold'}>Popis: </h6>
                     <p>{incident.description ? incident.description : "-"}</p>
@@ -71,8 +71,8 @@ function IncidentDetail() {
             <AppNavbar/>
             <Container fluid="md">{detail}</Container>
             <Container fluid="md">
-                <h2>Nahlášené škody</h2>
-                {incident && <Damage id={incident.id}/>}
+                <h2>Nahlášené škody u incidentu č. {id}</h2>
+                {incident && <DamageTable id={incident.id}/>}
             </Container>
         </div>
     );

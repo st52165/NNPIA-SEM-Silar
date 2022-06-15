@@ -3,13 +3,13 @@ import {Redirect, Route} from 'react-router-dom'
 
 const PrivateRoute = ({component: Component, ...rest}) => {
 
-    const isLoggedIn = AuthenticationService.isUserLogin()
+    const isAdminLoggedIn = AuthenticationService.isAdminDS()
 
     return (
         <Route
             {...rest}
             render={props =>
-                isLoggedIn ? (
+                isAdminLoggedIn ? (
                     <Component {...props} />
                 ) : (
                     <Redirect to={{pathname: '/signin', state: {from: props.location}}}/>

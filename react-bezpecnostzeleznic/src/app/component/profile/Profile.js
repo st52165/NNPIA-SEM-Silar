@@ -3,7 +3,6 @@ import {Container} from "reactstrap";
 import {Alert} from "react-bootstrap";
 import React, {useState, useEffect} from "react";
 import UserService from "../../service/UserService";
-import AuthenticationService from "../../service/AuthenticationService";
 
 function Profile() {
     const [username, setUsername] = useState('');
@@ -27,8 +26,9 @@ function Profile() {
                         setEmail(response.data.email);
                         setRole(response.data.role);
                         setIsPending(false);
-                    },
-                    error => (error.data && error.data.message && setError(error.data.message))
+                    })
+                .catch(
+                    err => (err.data && err.data.message && setError(err.data.message))
                 );
         }
 

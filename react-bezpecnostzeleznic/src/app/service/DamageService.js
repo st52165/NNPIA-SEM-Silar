@@ -4,8 +4,7 @@ axios.interceptors.request.use((config) => {
     const user = JSON.parse(localStorage.getItem("user"));
 
     if (user && user.accessToken) {
-        const token = "Bearer " + user.accessToken;
-        config.headers.Authorization = token;
+        config.headers.Authorization = "Bearer " + user.accessToken;
     }
 
     return config;
@@ -14,15 +13,24 @@ axios.interceptors.request.use((config) => {
 const SERVER_PREFIX = process.env.REACT_APP_BASE_URI
 
 const DamageService = {
-    postDamage : async function(data){
+    postDamage: async function (data) {
         return await axios.post(`${SERVER_PREFIX}/api/damage`, data);
     },
 
-    getAllDamages : async function(){
+    getAllDamages: async function () {
         return await axios.get(`${SERVER_PREFIX}/api/damage`);
     },
 
-    getAllDamagesByIncidentId : async function(id){
+    getDamageById: async function (id) {
+        return await axios.get(`${SERVER_PREFIX}/api/damage/${id}`);
+    },
+    putDamageById: async function (id, data) {
+        return await axios.put(`${SERVER_PREFIX}/api/damage/${id}`, data);
+    },
+    deleteDamageById: async function (id, data) {
+        return await axios.delete(`${SERVER_PREFIX}/api/damage/${id}`, data);
+    },
+    getAllDamagesByIncidentId: async function (id) {
         return await axios.get(`${SERVER_PREFIX}/api/damage/incident/${id}`);
     }
 }
