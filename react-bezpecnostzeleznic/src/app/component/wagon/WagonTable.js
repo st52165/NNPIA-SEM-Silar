@@ -2,12 +2,11 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import AppNavbar from "../nav/AppNavbar";
 import {Container} from "reactstrap";
 import React, {useEffect, useState} from "react";
-import {Alert} from "react-bootstrap";
+import {Alert, Pagination} from "react-bootstrap";
 import AuthenticationService from "../../service/AuthenticationService";
 import CarrierService from "../../service/CarrierService";
 import WagonService from "../../service/WagonService";
 import filterFactory, {selectFilter, textFilter} from "react-bootstrap-table2-filter";
-import paginationFactory from "react-bootstrap-table2-paginator";
 
 
 function WagonTable() {
@@ -15,12 +14,16 @@ function WagonTable() {
     const [wagonTypes, setWagonTypes] = useState([]);
     const [carriers, setCarriers] = useState([]);
     const [isAdmin, setAdmin] = useState(false);
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [sortBy, setSortBy] = useState("id");
+    const [direction, setDirection] = useState("asc");
 
     useEffect(() => {
-        WagonService.getAllWagons().then((response) => {
+        WagonService.getAllWagons(pageNumber, pageSize, sortBy, direction).then((response) => {
             setWagons(response.data);
         });
-    }, [setWagons]);
+    }, [setWagons, pageNumber, pageSize, sortBy, direction]);
 
     useEffect(() => {
         const authorities = AuthenticationService.getAuthorities();
@@ -57,11 +60,19 @@ function WagonTable() {
         }
     ));
 
+    let onSortFunction = (field, newDirection) => {
+        setDirection(newDirection)
+        setSortBy(field);
+    }
+    let sortFunction = null;
+
     const columns = [{
         dataField: 'id',
         text: 'ID',
         filter: textFilter(),
         sort: true,
+        onSort: onSortFunction,
+        sortFunc: sortFunction,
         isKey: true
     }, {
         dataField: 'wagonType',
@@ -69,39 +80,69 @@ function WagonTable() {
         filter: selectFilter({
             options: wagonTypesOptions
         }),
-        sort: true
+        sort: true,
+        onSort: onSortFunction,
+        sortFunc: sortFunction
     }, {
         dataField: 'carrierDto.name',
         text: 'Dopravce',
         filter: isAdmin ? selectFilter({
             options: carrierOptions
         }) : null,
-        sort: true
+        sort: true,
+        onSort: (_field, newDirection) => onSortFunction('carrier.name', newDirection),
+        sortFunc: sortFunction
     }, {
         dataField: 'length',
         text: 'Délka',
-        sort: true
+        sort: true,
+        direction: direction
     }, {
         dataField: 'weight',
         text: 'Váha',
-        sort: true
+        sort: true,
+        onSort: onSortFunction,
+        sortFunc: sortFunction
     }];
 
-    const defaultSorted = [{
-        dataField: 'id',
-        order: 'asc'
-    }];
+    const onSizePerPageChange = (e) => {
+        setPageSize(e.target.value);
+        setPageNumber(1);
+    };
 
     let dataTable = (
-        <div>
-            <Alert variant="info">
-                <h1>Vagóny</h1>
-            </Alert>
-            <br/>
-            <BootstrapTable keyField='id' data={wagons} columns={columns} pagination={paginationFactory()}
-                            filter={filterFactory()} defaultSorted={defaultSorted} hover bootstrap4/>
-        </div>
-    );
+            <div>
+                <Alert variant="info">
+                    <h1>Vagóny</h1>
+                </Alert>
+                <br/>
+                <BootstrapTable keyField='id' data={wagons} columns={columns} filter={filterFactory()}
+                                hover bootstrap4 label/>
+
+                <div style={{display: "flex", justifyContent: "flex-start", gap: "22.5em"}}>
+                    <select className=" btn dropdown-toggle react-bs-table-sizePerPage-dropdown dropdown"
+                            onChange={onSizePerPageChange}
+                            style={{color: "white", backgroundColor: "#6c757d", maxWidth: "62px", maxHeight: "37px"}}>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                    </select>
+
+                    <Pagination style={{display: "flex", justifyContent: "center"}}>
+                        <Pagination.First onClick={() => {
+                            pageNumber > 1 && setPageNumber(pageNumber - 1)
+                        }}/>
+                        <Pagination.Item active>{pageNumber}</Pagination.Item>
+                        <Pagination.Last onClick={() => {
+                            wagons.length >= pageSize && setPageNumber(pageNumber + 1)
+                        }}/>
+                    </Pagination>
+                </div>
+            </div>
+        )
+    ;
 
     return (
         <div>

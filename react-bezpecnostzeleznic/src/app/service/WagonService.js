@@ -16,8 +16,8 @@ const WagonService = {
     getWagonsByCarrier: async function () {
         return await axios.get(`${SERVER_PREFIX}/api/wagons/carrier`);
     },
-    getAllWagons: async function () {
-        return await axios.get(`${SERVER_PREFIX}/api/wagons`);
+    getAllWagons: async function (pageNumber = 1, pageSize = 10, sortBy = 'id', direction = 'asc') {
+        return await axios.get(`${SERVER_PREFIX}/api/wagons?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&direction=${direction}`);
     },
     getAllWagonTypes: async function () {
         return await axios.get(`${SERVER_PREFIX}/api/wagons/type`);
