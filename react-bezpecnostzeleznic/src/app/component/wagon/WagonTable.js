@@ -67,14 +67,14 @@ function WagonTable() {
         dataField: 'wagonType',
         text: 'Typ vagónu',
         filter: selectFilter({
-            options: () => wagonTypesOptions
+            options: wagonTypesOptions
         }),
         sort: true
     }, {
         dataField: 'carrierDto.name',
         text: 'Dopravce',
         filter: isAdmin ? selectFilter({
-            options: () => carrierOptions
+            options: carrierOptions
         }) : null,
         sort: true
     }, {

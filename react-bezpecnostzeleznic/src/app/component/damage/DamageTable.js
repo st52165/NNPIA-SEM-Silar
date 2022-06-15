@@ -26,7 +26,7 @@ function DamageTable(props) {
         DamageService.getAllDamagesByIncidentId(props.id).then((response) => {
             setDamages(response.data)
         })
-    }, [setDamages, props])
+    }, [props])
 
     const handleOnSelect = (row) => {
         if (AuthenticationService.isAdminDS()) {

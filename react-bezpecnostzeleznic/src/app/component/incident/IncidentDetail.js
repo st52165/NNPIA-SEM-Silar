@@ -10,15 +10,15 @@ import UserFormatter from "../../service/UserFormatter";
 import DamageTable from "../damage/DamageTable";
 
 function IncidentDetail() {
-    const {id} = useParams();
-    const [incident, setIncident] = useState(undefined);
+    const {id} = useParams([]);
+    const [incident, setIncident] = useState([]);
 
     useEffect(() => {
         IncidentService.getIncidentByIncidentId(id)
             .then((response) => {
                 setIncident(response.data);
             });
-    }, [id]);
+    }, [setIncident]);
 
     let detail = (
         <div>
@@ -71,8 +71,8 @@ function IncidentDetail() {
             <AppNavbar/>
             <Container fluid="md">{detail}</Container>
             <Container fluid="md">
-                <h2>Nahlášené škody u incidentu č. {id}</h2>
-                {incident && <DamageTable id={incident.id}/>}
+                <h2>Nahlášené škody u incidentu č. {incident.id}</h2>
+                {incident.id != null && <DamageTable id={incident.id}/>}
             </Container>
         </div>
     );

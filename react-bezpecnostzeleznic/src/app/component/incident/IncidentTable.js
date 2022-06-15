@@ -138,14 +138,14 @@ function IncidentTable() {
         dataField: 'incidentType',
         text: 'Typ incidentu',
         filter: selectFilter({
-            options: () => incidentTypeOptions
+            options: incidentTypeOptions
         }),
         sort: true
     }, {
         dataField: 'regionDto.name',
         text: 'Region',
         filter: selectFilter({
-            options: () => regionOptions
+            options: regionOptions
         }),
         sort: true
     }, {
@@ -154,14 +154,14 @@ function IncidentTable() {
         filterValue: userFilterValue,
         text: 'Zadal Uživatel',
         filter: selectFilter({
-            options: () => usernameOptions
+            options: usernameOptions
         }),
         sort: true
     }, {
         dataField: 'userInfoDto.carrierInfoDto.name',
         text: 'Dopravní společnost',
         filter: AuthenticationService.isAdminDS() ? selectFilter({
-            options: () => carrierOptions
+            options: carrierOptions
         }) : null,
         sort: true
     }, {
@@ -187,7 +187,7 @@ function IncidentTable() {
             dataField: 'criminalOffense',
             text: 'Trestný čin',
             filter: selectFilter({
-                options: () => booleanOptions
+                options: booleanOptions
             }),
             formatter: IncidentFormatter.booleanFormatter,
             filterValue: IncidentFormatter.booleanFormatter,
@@ -197,7 +197,7 @@ function IncidentTable() {
             dataField: 'solvedByPolice',
             text: 'Řešeno policí',
             filter: selectFilter({
-                options: () => booleanOptions
+                options: booleanOptions
             }),
             formatter: IncidentFormatter.booleanFormatter,
             filterValue: IncidentFormatter.booleanFormatter,
