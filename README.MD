@@ -1,94 +1,140 @@
-# Spring Boot Security and working example JWT authentication
+# NNPIA - Semestral Work
 
-Source codes are downloaded from https://www.javainuse.com/spring/boot-jwt
+## Data Model
 
-This example was created because of broken dependencies in the origin source codes. 
-Demo of http request for IntelliJ is included in the file [example.http](example.http)
+![data-model](documentation/img/Graf.png)
 
-Workspace for [Insomnia](insomnia-workspace.json) is also included.
+## BACKEND
 
-The application contains following two basic endpoints:
-- POST      /authenticate - returns token
-- GET       /hello - test authenticated endpoint 
+### AUTHENTICATION CONTROLLER
 
-The application contains employee REST API which simulates real-life use-case  :
-- GET       /employees - returns all employees
-- POST      /employees - creates new employee
-- DELETE    /employees/{employeeId} - delete employee by id
+#### BASE URL: /api/authentication
 
+| Operation | Path    | Parameters                 | Body                                                        | Description                          |
+|-----------|---------|----------------------------|-------------------------------------------------------------|--------------------------------------|
+| `POST`    | /signin | loginRequest               | username and password                                       | Login user.                          |
+| `POST`    | /signup | currentUser, signUpRequest | current logged user and new credentials of registering user | Create registration of the new user. |
 
-### Get token request
-```http request
+### CARRIER CONTROLLER
 
+#### BASE URL: /api/carriers
 
-> POST /authenticate HTTP/1.1
-> Host: localhost:8080
-> User-Agent: insomnia/2020.4.2
-> Content-Type: application/json
-> Accept: */*
-> Content-Length: 59
+| Operation | Path        | Parameters     | Body | Description              |
+|-----------|-------------|----------------|------|--------------------------|
+| `GET`     |             |                | name | Get all carriers.        |
+| `POST`    |             | carrierRequest |      | Create new carrier.      |
+| `GET`     | /***{id}*** |                |      | Get specific carrier.    |
+| `PUT`     | /***{id}*** | carrierRequest | name | Update specific carrier. |
+| `DELETE`  | /***{id}*** |                |      | Delete specific carrier. |
 
-| {
-|     "username": "javainuse",
-|     "password": "password"
-| }
-```
+### DAMAGE CONTROLLER
 
-#### Get response
-```
-HTTP/1.1 200 
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: DENY
-Content-Type: application/json;charset=UTF-8
-Transfer-Encoding: chunked
-Date: Wed, 05 May 2021 18:24:21 GMT
+#### BASE URL: /api/damage
 
-{
-  "token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYXZhaW51c2UiLCJleHAiOjE2MjAyNTcwNjEsImlhdCI6MTYyMDIzOTA2MX0.jsQ-jG6A2HHyXKFbYoBGzXbhqpK134M2Uw6yvXA1DD1lEGltNRO3-c1u04yLvs9HJ24q0aQz1CVlky6EcQ53uA"
-}
+| Operation | Path                 | Parameters | Body                          | Description                           |
+|-----------|----------------------|------------|-------------------------------|---------------------------------------|
+| `GET`     |                      |            | id, name, price, incidentInfo | Get all damages.                      |
+| `POST`    |                      | damageDto  | name, price, incidentID       | Create new damage.                    |
+| `GET`     | /***{id}***          |            |                               | Get specific damage.                  |
+| `GET`     | /incident/***{id}*** |            |                               | Get all damages by specific incident. |
+| `PUT`     | /***{id}***          | damageDto  | id, name, price, incidentID   | Update specific damage.               |
+| `DELETE`  | /***{id}***          |            |                               | Delete specific damage.               |
 
-Response code: 200; Time: 103ms; Content length: 191 bytes
+### INCIDENT CONTROLLER
 
-```
+#### BASE URL: /api/incident
 
----
+| Operation | Path                          | Parameters  | Body                                                                                                                                        | Description                                  |
+|-----------|-------------------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------|
+| `GET`     | /all                          |             | id, position, validityFrom, validityTo, description, isCriminalOffense, isSolvedByPolice, incidentType, wagonsInfoDto, userInfo, regionInfo | Get all incidents.                           |
+| `GET`     | /user/all                     |             |                                                                                                                                             | Get all incidents by the logged user.        |
+| `GET`     | /carrier/***{carrierName}***  |             |                                                                                                                                             | Get all incidents by the carrier name.       |
+| `GET`     | /type                         |             | name                                                                                                                                        | Get all incident types.                      |
+| `GET`     | /carrier/***{incidentType}*** |             |                                                                                                                                             | Get all incidents by the incident type name. |
+| `GET`     | /***{id}***                   |             |                                                                                                                                             | Get specific incident.                       |
+| `POST`    |                               | incidentDto | position latitude, position longtitude, validityFrom, validityTo, description, isCriminalOffense, isSolvedByPolice, incidentType, regionID  | Create new incident.                         |
+| `PUT`     | /***{id}***                   | incidentDto |                                                                                                                                             | Update specific incident.                    |
+| `DELETE`  | /***{id}***                   |             |                                                                                                                                             | Delete specific incident.                    |
 
-### Request with bearer token
-Then the token have to be used in next request
-```http request
+### Region CONTROLLER
 
-> GET /hello HTTP/1.1
-> Host: localhost:8080
-> User-Agent: insomnia/2020.4.2
-> Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYXZhaW51c2UiLCJleHAiOjE2MjAyNTcyNTMsImlhdCI6MTYyMDIzOTI1M30.GmNaf94DRscU5DDJ88lWpJ-MQzQqZR8DYgXEA4h2PKNuHmHsZOZ7qpraXT4_Wk7tPTlnentvDSa3vN1pfgrP7Q
-> Accept: */*
-```
-#### Response 
-```
-HTTP/1.1 200 
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-Pragma: no-cache
-Expires: 0
-X-Frame-Options: DENY
-Content-Type: text/plain;charset=UTF-8
-Content-Length: 11
-Date: Wed, 05 May 2021 18:25:49 GMT
+#### BASE URL: /api/region
 
-Hello World
-
-Response code: 200; Time: 21ms; Content length: 11 bytes
-```
+| Operation | Path               | Parameters | Body                | Description                                  |
+|-----------|--------------------|------------|---------------------|----------------------------------------------|
+| `GET`     |                    |            | id, name, shortName | Get all regions.                             |
+| `GET`     | /name/***{name}*** |            |                     | Get specific region by the region type name. |
+| `GET`     | /***{id}***        |            |                     | Get specific region.                         |
+| `POST`    |                    | regionDto  | name, shortName     | Create new region.                           |
+| `PUT`     | /***{id}***        | regionDto  |                     | Update specific region.                      |
+| `DELETE`  | /***{id}***        |            |                     | Delete specific incident.                    |
 
 
-## Example in insomnia
+### USER CONTROLLER
 
-![Get token](./img/get-token.png)
+#### BASE URL: /api/user
 
-![Get token](./img/get-request.png)
+| Operation | Path                   | Parameters  | Body                                                        | Description                                                    |
+|-----------|------------------------|-------------|-------------------------------------------------------------|----------------------------------------------------------------|
+| `GET`     |                        | currentUser | id, firstname, lastname, username, email, role, carrierInfo | Get current logged user.                                       |
+| `GET`     | /***{username}***      |             |                                                             | Get specific user by username.                                 |
+| `GET`     | /carrier               |             |                                                             | Get user list with same carrier as a carrier of a logged user. |
+| `GET`     | /names                 |             |                                                             | Get all usernames list.                                        |
+| `GET`     | /list                  |             |                                                             | Get all users list.                                            |
+| `GET`     | /name/***{username}*** |             | boolean                                                     | Returns true, if specific username already exists.             |
+| `DELETE`  |                        |             |                                                             | Delete current logged user.                                    |
+| `DELETE`  | /***{id}***            |             |                                                             | Delete specific user.                                          |
 
+### WAGON CONTROLLER
+
+#### BASE URL: /api/wagons
+
+| Operation | Path                  | Parameters                              | Body                                       | Description                                                     |
+|-----------|-----------------------|-----------------------------------------|--------------------------------------------|-----------------------------------------------------------------|
+| `GET`     |                       | pageNumber, pageSize, sortBy, direction | id, wagonType, length, weight, carrierInfo | Get all wagons. Optionally returns collection sorted and paged. |
+| `GET`     | /type                 |                                         | name                                       | Get all wagon types.                                            |
+| `GET`     | /type/***{name}***    |                                         |                                            | Get all wagons by the wagon type name.                          |
+| `GET`     | /carrier/***{name}*** |                                         |                                            | Get all wagons by the carrier name.                             |
+| `GET`     | /***{id}***           |                                         |                                            | Get specific wagon.                                             |
+| `POST`    |                       | wagonDto                                | wagonType, length, weight                  | Create new wagon.                                               |
+| `PUT`     | /***{id}***           | wagonDto                                |                                            | Update specific wagon.                                          |
+| `DELETE`  | /***{id}***           |                                         |                                            | Delete specific wagon.                                          |
+
+
+## FRONTEND
+
+### LOGIN FORM
+
+![login-form](documentation/img/login_form.png)
+
+### REGISTER FORM
+
+![register-form](documentation/img/register.png)
+
+### ADMIN VIEW
+
+![admin-gui](documentation/img/admin.png)
+
+### USER VIEW
+
+![user-gui](documentation/img/user.png)
+
+### WAGON TABLE
+
+![wagon-table](documentation/img/wagons.png)
+
+### INCIDENT REPORT FORM
+
+![report-form](documentation/img/report.png)
+
+### INCIDENT TABLE
+
+![incident-table](documentation/img/incidents.png)
+
+### INCIDENT DETAIL
+
+![incident-detail](documentation/img/incident_detail.png)
+
+### INCIDENT DAMAGE FORM
+
+![-incident-damage-form](documentation/img/damage_form.png)
